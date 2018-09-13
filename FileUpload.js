@@ -202,9 +202,18 @@ export default class FileUpload  extends Component{
             newFiles.length = numberLimit
             files = newFiles
         }
-        this.files = files
-        this.chooseFile(files)
-        this.chooseAndUpload && this.commonUpload()
+        this.files = files;
+
+        if(!this.multiple){
+          if(files.length){
+            this.chooseFile(files);
+            this.chooseAndUpload && this.commonUpload();
+          }
+        }else{
+          this.chooseFile(files);
+          this.chooseAndUpload && this.commonUpload();
+        }
+
     };
     
     /*执行上传*/
