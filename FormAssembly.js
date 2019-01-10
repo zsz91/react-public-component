@@ -53,6 +53,11 @@ export default class FormAssembly extends Component{
       return <Row key={item[0].key}>
         {
             item.map( (info) => {
+              const itemDisabled = disabled ;
+              if(typeof info.disabled !== 'undefined'){
+                itemDisabled = info.disabled;
+              }
+              console.log(itemDisabled);
               switch(info.type){
                 case 'input': //普通文本
                   return <Col span={info.span}
@@ -65,7 +70,7 @@ export default class FormAssembly extends Component{
                               style={{}}
                     ><Input value={value[info.key]}
                             readOnly={ readOnly }
-                            disabled={ disabled || false }
+                            disabled={ itemDisabled }
                             placeholder={info.placeholder}
                             onChange={(e)=>{changeValue(e.target.value, info.key)}}/>
                     </FormItem>
@@ -81,6 +86,7 @@ export default class FormAssembly extends Component{
                     ><Input value={value[info.key]}
                             type='number'
                             readOnly={ readOnly }
+                            disabled={ itemDisabled }
                             placeholder={info.placeholder}
                             onChange={(e)=>{changeValue(e.target.value, info.key)}}/>
                     </FormItem>
@@ -95,7 +101,7 @@ export default class FormAssembly extends Component{
                               wrapperCol={{span: 16}}
                     ><CheckboxGroup value={value[info.key]}
                                     type='number'
-                                    disabled={ readOnly }
+                                    disabled={ itemDisabled }
                                     placeholder={info.placeholder}
                                     options={info.options}
                                     onChange={(value)=>{changeValue(value, info.key)}}/>
@@ -111,7 +117,7 @@ export default class FormAssembly extends Component{
                               wrapperCol={{span: 16}}
                     ><Select value={value[info.key]}
                              mode="multiple"
-                             disabled={readOnly}
+                             disabled={ itemDisabled }
                              style={{ width: '100%' }}
                              placeholder={info.placeholder}
                              onChange={(value)=>{changeValue(value, info.key)}}>
@@ -134,7 +140,7 @@ export default class FormAssembly extends Component{
                               wrapperCol={{span: 16}}
                     ><Select value={value[info.key]}
                              style={{ width: '100%' }}
-                             disabled={readOnly}
+                             disabled={ itemDisabled }
                              placeholder={info.placeholder}
                              onChange={(value)=>{changeValue(value, info.key)}}>
                       {info.options.map((optionItem) => {
@@ -155,7 +161,7 @@ export default class FormAssembly extends Component{
                               className={styles.magBottom15}
                               wrapperCol={{span: 16}}
                     ><Checkbox checked={value[info.key]}
-                               disabled={ readOnly || typeof info.readOnly !== 'undefined' ? info.readOnly : false }
+                               disabled={ itemDisabled }
                                onChange={(e)=>{changeValue(e.target.value, info.key)}}>
                       {info.text}
                     </Checkbox>
@@ -171,6 +177,7 @@ export default class FormAssembly extends Component{
                               wrapperCol={{span: 20}}
                     ><TextArea value={value[info.key]}
                                readOnly={readOnly}
+                               disabled={ itemDisabled }
                                rows={8}
                                onChange={(e)=>{changeValue(e.target.value, info.key)}}>
                     </TextArea>
@@ -186,7 +193,7 @@ export default class FormAssembly extends Component{
                               wrapperCol={{span: 16}}
                     ><DatePicker value={value[info.key] ?  moment(value[info.key], info.format) : null}
                                  showTime={info.showTime}
-                                 disabled={readOnly}
+                                 disabled={ itemDisabled }
                                  format={info.format}
                                  onChange={(date,dateString)=>{this.datePickerOnchange(dateString, info.key)}}>
                     </DatePicker>

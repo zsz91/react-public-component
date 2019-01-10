@@ -1,0 +1,79 @@
+.shell{
+  padding: 0 12px 10px 12px;
+  .row {
+    background-color: rgba(255,255,255,1);;
+  }
+}
+.blockTitle{
+  font-size:14px;
+  font-weight:bold;
+  color:rgba(51,51,51,1);
+  padding: 12px;
+  cursor: default;
+  height: 36px;
+  border-bottom: 1px solid rgb(240, 240, 240);
+}
+.CardDiy {
+  :global {
+    .ant-card-head {
+      min-height: 40px;
+      height: 40px;
+      font-size:14px;
+      font-weight:bold;
+      padding: 0;
+    //  padding: 13px 0px 12px 14px;
+      color:rgba(51,51,51,1);
+    }
+    .ant-card-head-wrapper{
+      display: flex;
+      line-height: 40px;
+      height: 40px;
+      padding-left: 12px;
+      align-items: center;
+    }
+    .ant-card-extra{
+      padding-right: 12px;
+    }
+    .ant-card-body{
+      padding: 0;
+      span{
+        height:40px;
+        p{
+          padding-left: 24px;
+          border-bottom: 1px solid #e8e8e8;
+          line-height:40px;
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+  .handMouse{
+    cursor: pointer;
+  }
+}
+
+.NormalTable{
+  padding: 0 12px 0 12px;
+  :global{
+    .ant-table-thead > tr > th{
+      height: 36px;
+      background: rgba(233,241,247,1);
+    }
+  }
+}
+@buleBgColor : rgba(25,152,240,1);
+@whiteFont: rgba(255,255,255,1);
+.primaryBlue{
+  font-size:14px;
+  font-weight:400;
+  color:@whiteFont;
+  height:30px;
+  background:@buleBgColor;
+  border-radius:2px;
+  border-color:@buleBgColor;
+  &:hover,&:active,&:focus{
+    background:@buleBgColor;
+    color:@whiteFont;
+    border-color:@buleBgColor;
+  }
+}
