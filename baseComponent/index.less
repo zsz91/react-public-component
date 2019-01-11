@@ -1,25 +1,97 @@
+.FieldList{
+  @height: 30px;
+  padding-right: 10px;
+  padding-left: 10px;
+  .colOut{
+    padding: 10px;
+    .group{
+      border: 1px solid #eee;
+      height: 30px;
+    }
+    .name{
+      background-color: #eee;
+      text-align: center;
+      font-size: 14px;
+      color: #3a3a3a;
+      height: 100%;
+      line-height: @height;
+    }
+    .discrib{
+      padding-left: 5px;
+      font-size: 12px;
+      letter-spacing: .1px;
+      color: #3a3a3a;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      height: 100%;
+      line-height: @height;
+    }
+  }
+
+}
+
+.FieldListWithoutBg{
+  padding-top: 15px;
+  padding-right: 10px;
+  padding-left: 10px;
+  @height: 15px;
+  .withoutBgcolOut{
+    padding: 10px;
+    .withoutBgGroup{
+      height: @height;
+    }
+    .withoutBgName{
+      font-size: 14px;
+      color: #666;
+      height: 100%;
+      line-height: @height;
+      div{
+        text-align: right;
+      }
+      div:after {
+        content: " ";
+        display: inline-block;
+        width: 100%;
+      }
+    }
+    .withoutBgDiscrib{
+      padding-left: 12px;
+      font-size: 14px;
+      letter-spacing: .1px;
+      color: #555;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      height: 100%;
+      line-height: @height;
+    }
+  }
+}
 .shell{
-  padding: 0 12px 10px 12px;
+  margin-top:20px;
   .row {
     background-color: rgba(255,255,255,1);;
   }
 }
+
 .blockTitle{
+  border-bottom: 1px solid #ccc;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
   font-size:14px;
-  font-weight:bold;
-  color:rgba(51,51,51,1);
-  padding: 12px;
+  color:rgb(27, 27, 27);
   cursor: default;
-  height: 36px;
-  border-bottom: 1px solid rgb(240, 240, 240);
 }
+
 .CardDiy {
   :global {
     .ant-card-head {
       min-height: 40px;
       height: 40px;
       font-size:14px;
-      font-weight:bold;
       padding: 0;
     //  padding: 13px 0px 12px 14px;
       color:rgba(51,51,51,1);
@@ -53,27 +125,109 @@
 }
 
 .NormalTable{
-  padding: 0 12px 0 12px;
+  @TableThemeColor: #5e9ede;
+  @TableThemeBgColor: #e6f7ff;
+  padding: 6px 12px 0 12px;
   :global{
     .ant-table-thead > tr > th{
-      height: 36px;
-      background: rgba(233,241,247,1);
+      padding: 0 12px;
+      height: 50px;
+      color: rgba(0,0,0,.65);
+      background-color: #e9f2fb;
+    }
+    a{
+      color: @TableThemeColor;
+    }
+    .ant-pagination-item-active, .ant-pagination-item:focus, .ant-pagination-item:hover{
+      border-color: @TableThemeColor;
+    }
+    .ant-pagination-options-quick-jumper input:focus{
+      border-color: @TableThemeColor;
+      box-shadow: 0 0 0 2px @TableThemeBgColor;
+    }
+    .ant-pagination-options-quick-jumper input:hover{
+      border-color: @TableThemeColor;
+    }
+    .ant-pagination-item:focus a, .ant-pagination-item:hover a{
+      color:@TableThemeColor;
+    }
+    .ant-pagination-item-active:focus a, .ant-pagination-item-active:hover a{
+      color:@TableThemeColor;
+    }
+    .ant-checkbox-checked .ant-checkbox-inner{
+      background-color: @TableThemeColor;
+      border-color: @TableThemeColor;
+    }
+    .ant-checkbox-wrapper:hover .ant-checkbox-inner, .ant-checkbox:hover .ant-checkbox-inner, .ant-checkbox-input:focus + .ant-checkbox-inner{
+      border-color:@TableThemeColor;
+    }
+    ::selection{
+      background: @TableThemeColor;
+    }
+    .ant-checkbox-indeterminate .ant-checkbox-inner:after{
+      background: @TableThemeColor;
+    }
+    tbody > tr.ant-table-row-hover:not(.ant-table-expanded-row) > td,.ant-table-tbody > tr:hover:not(.ant-table-expanded-row) > td{
+      background: @TableThemeBgColor;
+    }
+    .ant-pagination{
+      width: 100%;
+      text-align: center;
+      padding-top: 20px;
     }
   }
 }
-@buleBgColor : rgba(25,152,240,1);
-@whiteFont: rgba(255,255,255,1);
-.primaryBlue{
-  font-size:14px;
-  font-weight:400;
-  color:@whiteFont;
-  height:30px;
-  background:@buleBgColor;
-  border-radius:2px;
-  border-color:@buleBgColor;
-  &:hover,&:active,&:focus{
-    background:@buleBgColor;
-    color:@whiteFont;
-    border-color:@buleBgColor;
+
+
+.ButtonDiy{
+  @blue: rgba(25,152,240,1);
+  @white: rgba(255,255,255,1);
+  @red: #F14B5A;
+  padding-right: 12px;
+  button{
+    height:30px;
   }
+  .primaryBlue{
+    font-size:14px;
+    font-weight:400;
+    color:@white;
+    height:30px;
+    background:@blue;
+    border-radius:2px;
+    border-color:@blue;
+    &:hover,&:active,&:focus{
+      background:@blue;
+      color:@white;
+      border-color:@white;
+    }
+  }
+  .defaultBlue{
+    font-size:14px;
+    font-weight:400;
+    color:@blue;
+    height:30px;
+    background:@white;
+    border-radius:2px;
+    border-color:@blue;
+    &:hover,&:active,&:focus{
+      background:@white;
+      color:@blue;
+      border-color:@blue;
+    }
+  }
+  .defaultRed{
+    font-size:14px;
+    font-weight:400;
+    color:@red;
+    height:30px;
+    background:@white;
+    border-radius:2px;
+    border-color:@red;
+    &:hover,&:active,&:focus{
+      background:@white;
+      color:@red;
+      border-color:@red;
+    }
+  }
+
 }

@@ -170,9 +170,42 @@ NormalTable.defaultProps = {
         title: '描述',
       },
       {
+        dataIndex: 'name3',
+        title: '名称',
+      },
+      {
+        dataIndex: 'code3',
+        title: '编码',
+      },
+      {
+        dataIndex: 'level3',
+        title: '优先级',
+      },
+      {
+        dataIndex: 'desc3',
+        title: '描述',
+      },
+      {
+        dataIndex: 'name4',
+        title: '名称',
+      },
+      {
+        dataIndex: 'code4',
+        title: '编码',
+      },
+      {
+        dataIndex: 'level4',
+        title: '优先级',
+      },
+      {
+        dataIndex: 'desc4',
+        title: '描述',
+      },
+      {
         dataIndex: 'operation',
         title: '操作',
-      //  fixed: 'right',
+        fixed: 'right',
+        width: 120,
         render: (text, record)=>{
           return <span><a href="#">编辑 </a>|<a href="#"> 删除</a></span>
         }

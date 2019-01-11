@@ -14,15 +14,17 @@ export default class ButtonDiy extends Component {
 
 
   render(){
-    const { handleClick, icon, text, className, type } = this.props;
+    const { handleClick, icon, name, className, type } = this.props;
     return (
+      <span className={styles.ButtonDiy}>
       <Button onClick={()=>{handleClick()}}
               className={styles[className]}
               type={type}
       >
         {icon ? <Icon type={icon} /> : null}
-        {text}
+        {name}
       </Button>
+    </span>
     );
   }
 
@@ -35,9 +37,10 @@ ButtonDiy.propTypes = {
   type: PropTypes.string, // Button type
 };
 ButtonDiy.defaultProps = {
-  icon: 'plus' || '',
+  icon: '', //'plus'
   name:  '新建子部门',
   type: 'primary',
-  className: 'primaryBlue',
+  className: '', // primaryBlue = {背景色,边框:蓝色 字体:白色} defaultBlue= {背景色:白色 字体,边框:蓝色} defaultRed = {背景色:白色 字体,边框:红色}
+
   handleClick: ()=>{console.log('点击')}
 };

@@ -16,8 +16,8 @@ export default class Shell extends Component {
       return (
         <div className={styles.shell}>
         <Row className={styles.row}>
-        {children}
-          </Row>
+          {children}
+        </Row>
         </div>
           );
   }
