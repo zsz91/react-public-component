@@ -33,6 +33,12 @@ export default class NormalTable extends Component {
 
   render(){
     const { dataSource, columns, rowKey, handleSelectRow, Pagination } = this.props;
+    const rowSelection =  handleSelectRow === false ? null : {
+      columnWidth: 30,
+      fixed: true,
+      hideDefaultSelections: false,
+      onChange:(selectedRowKeys, selectedRows)=>{handleSelectRow( selectedRowKeys, selectedRows )}
+    };
     const {scrollX} = this.state;
     return (
           <Table dataSource={dataSource}
@@ -42,12 +48,7 @@ export default class NormalTable extends Component {
                  className={styles.NormalTable}
                  pagination={Pagination}
                  scroll={  scrollX > 0 ? { x: scrollX } : {}}
-                 rowSelection={{
-                   columnWidth: 30,
-                   fixed: true,
-                   hideDefaultSelections: false,
-                   onChange:(selectedRowKeys, selectedRows)=>{handleSelectRow( selectedRowKeys, selectedRows )}
-                 }}
+                 rowSelection={rowSelection}
           />
     );
   }
@@ -57,19 +58,21 @@ NormalTable.propTypes = {
   dataSource: PropTypes.array.isRequired, // 表格数据源 To Antd Table
   columns: PropTypes.array.isRequired, // 字段 To Antd Table
   rowKey: PropTypes.string, // rowKey To Antd Table
-  handleSelectRow: PropTypes.func, // 选择了一行的回调 To Antd Table
+  handleSelectRow: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.bool,
+  ]), // 行选择的事件,传false 表示不开放行选择 To Antd Table
   Pagination:PropTypes.object, // 分页配置 To Antd Pagination
 };
 NormalTable.defaultProps = {
   rowKey: 'id',
-  handleSelectRow: (selectedRowKeys, selectedRows)=>{console.log(selectedRowKeys,selectedRows)},
+  handleSelectRow: (selectedRowKeys, selectedRows)=>{console.log(selectedRowKeys,selectedRows)}, // false,
   Pagination: {
     defaultCurrent: 1,
     total: 20,
     pageSize: 5,
     showQuickJumper: true,
     onChange: (current, size) => {console.log(current, size)},
-
   },
   dataSource: [
     {

@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import styles from './index.less';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-
+import { countSpecialField } from './utils';
 const Option = Select.Option;
 const { TextArea } = Input;
 const FormItem = Form.Item;
@@ -21,21 +21,28 @@ export default class FieldList extends Component{
   }
 
   domAssembly = () => {
-    const {config, bigScreen, smallScreen, value, nameSpan} = this.props;
-    const bigSpan = Math.ceil(24/bigScreen);
-    const smallSpan = Math.ceil(24/smallScreen);
+    const {config, filedSpan, value, nameSpan} = this.props;
+    const bigSpan = Math.ceil(24/filedSpan.big);
+    const smallSpan = Math.ceil(24/filedSpan.small);
+
     return config.map((item) => {
           return <Col xl={smallSpan}
                       className={styles.colOut}
                       xxl={bigSpan}
+                      style={countSpecialField(filedSpan.big)}
                       key={item.key}>
                         <Row className={styles.group}>
-                          <Col span={nameSpan} className={styles.name}>
+                          <Col xl={nameSpan.small}
+                               xxl={nameSpan.big}
+                               className={styles.name}
+                          >
                             <label>
                               {item.name}
                             </label>
                           </Col>
-                          <Col span={24-nameSpan} className={styles.discrib}>
+                          <Col xl={24 - nameSpan.small}
+                               xxl={24 - nameSpan.big}
+                               className={styles.discrib}>
                               {value[item.key]}
                           </Col>
                         </Row>
@@ -53,21 +60,31 @@ export default class FieldList extends Component{
   }
 }
 /**
+ * 此组件用于 显示字段的信息 只读 字段名包含背景色和边框
+ * props 备注
  * config: 字段列表显示的每一个字段,具体请查看下面的demo
- * smallScreen: 设置1366*768的屏幕 每一行显示几个字段    只能在1,2,3,4之间取值  过大会导致页面排版不下
- * bigScreen: 设置1920*1080的屏幕  同上               只能在1,2,3,4,6,之间取值 过大会导致页面排版不下
+ * filedSpan 包含2个参数 {big: 4,small:4 }
+ *           small: 设置1366*768的屏幕 每一行显示几个字段    只能在1,2,3,4之间取值  过大会导致页面排版不下
+ *           big: 设置1920*1080的屏幕  每一行显示几个字段    只能在1,2,3,4,5,6,之间取值 过大会导致页面排版不下
+ * nameSpan: 字段名字的宽度. {big:4, small:5} 同上
  * value: 字段列表中每个字段的值 {name:'xxx', phone:'123123456',}
- * nameSpan: 字段名字的宽度. 如果字段名 字数少就配 4 5   多就配 7 8
+ *
  * */
 FieldList.propTypes = {
   config: PropTypes.array,
-  smallScreen: PropTypes.number,
-  bigScreen: PropTypes.number,
   value: PropTypes.object,
-  nameSpan: PropTypes.number,
+  filedSpan: PropTypes.object,
+  nameSpan: PropTypes.object,
 };
 FieldList.defaultProps = {
-  nameSpan: 9,
+  nameSpan:{
+    big:8,
+    small:9,
+  },
+  filedSpan: {
+    big: 5,
+    small: 4,
+  },
   config:[
     {
       name: '姓名',

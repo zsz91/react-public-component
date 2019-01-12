@@ -4,6 +4,7 @@
  * */
 import { Row, Col, Form, Input, Select, DatePicker, Checkbox, Button } from 'antd';
 import React, { Component } from 'react';
+import { countSpecialField } from './utils';
 import styles from './index.less';
 import PropTypes from 'prop-types';
 import moment from 'moment';
@@ -21,32 +22,28 @@ export default class FieldListRow extends Component{
   }
 
   domAssembly = () => {
-    const {config, value, nameSpan, filedSpan} = this.props;
+    const {config, value, nameSpan} = this.props;
     const bigSpan = 24;
     const smallSpan = 24;
-    const styleFiled5 = { paddingTop: 0 ,
-                          paddingBottom:'36px'};
-    let styleFiled1 = {};
-    if(document.body.clientWidth > 1400) {
-      if(nameSpan.big === 2) {
-        styleFiled1 = {width: '6%'};
-      }
-    }
+
     return config.map((item) => {
       return <Col xl={smallSpan}
                   xxl={bigSpan}
                   className={styles.withoutBgcolOut}
-                  style={styleFiled5}
+                  style={{ paddingTop: 0, paddingBottom:'36px'}}
                   key={item.key}>
         <Row className={styles.withoutBgGroup}>
           <Col xl={nameSpan.small}
                xxl={nameSpan.big}
                className={styles.withoutBgName}
-               style={styleFiled1}
+               style={countSpecialField(1,nameSpan.big)}
           >
             <div>{item.name}</div>
           </Col>
-          <Col span={24-nameSpan} className={styles.withoutBgDiscrib}>
+          <Col xl={24 - nameSpan.small}
+               xxl={24 - nameSpan.big}
+               className={styles.withoutBgDiscrib}
+          >
             {value[item.key]}
           </Col>
         </Row>
@@ -64,6 +61,8 @@ export default class FieldListRow extends Component{
   }
 }
 /**
+ * 此组件用于 一行显示一个字段的 只读信息
+ * props 备注
  * config: 字段列表显示的每一个字段,具体请查看下面的demo
  * nameSpan: 字段名字的宽度. {big:4, small:5}
  *           small: 设置1366*768的屏幕 字段名字的宽度
