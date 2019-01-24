@@ -1,6 +1,11 @@
 
 .FormArray{
   padding: 18px 12px 0 12px;
+  :global{
+    .ant-form-item{
+      margin-bottom: 12px;
+    }
+  }
   .colDom{
   }
 }
@@ -84,12 +89,13 @@
 
 .blockTitle{
   border-bottom: 1px solid #ccc;
-  height: 52px;
+  height: 48px;
   display: flex;
   align-items: center;
-  padding: 0 15px;
-  font-size:14px;
-  color:rgb(27, 27, 27);
+  padding: 0 40px;
+  font-size:18px;
+  color:#333;
+  font-weight:bold;
   cursor: default;
 }
 
@@ -136,14 +142,24 @@
   @TableThemeBgColor: #e6f7ff;
   padding: 6px 12px 0 12px;
   :global{
+
     .ant-table-thead > tr > th{
       padding: 0 12px;
       height: 50px;
       color: rgba(0,0,0,.65);
       background-color: #e9f2fb;
     }
+    .ant-table-content{
+      min-height: 500px;
+    }
+    p{
+      margin-bottom: 0 !important;
+    }
     a{
       color: @TableThemeColor;
+    }
+    .ant-table-thead > tr > th, .ant-table-tbody > tr > td{
+      padding: 10px 16px;
     }
     .ant-pagination-item-active, .ant-pagination-item:focus, .ant-pagination-item:hover{
       border-color: @TableThemeColor;
@@ -208,6 +224,20 @@
       border-color:@white;
     }
   }
+  .primaryRed{
+    font-size:14px;
+    font-weight:400;
+    color:@white;
+    height:30px;
+    background:@red;
+    border-radius:2px;
+    border-color:@red;
+    &:hover,&:active,&:focus{
+      background:@red;
+      color:@white;
+      border-color:@white;
+    }
+  }
   .defaultBlue{
     font-size:14px;
     font-weight:400;
@@ -239,3 +269,63 @@
 
 }
 
+.collegeTitle{
+  color: #333;
+  font-size: 18px;
+  text-align: center;
+  padding-bottom: 74px;
+  font-weight: 600;
+
+
+}
+.collegeStyle{
+  // width: 100%;
+  :global{
+    .ant-col-2{
+      width: 10%;
+      text-align: center
+    }
+  }
+}
+
+.colStyle{
+  color: #4992DF
+}
+.colStyle:hover{
+   background: green
+}
+.picName{
+  padding-left: 57px;
+  padding-top: 10px;
+}
+
+.modalDiy{
+  :global{
+    .ant-modal-title {
+      text-align: center;
+      font-size: 16px;
+      font-family: MicrosoftYaHei-Bold;
+      font-weight: bold;
+      color: rgba(51, 51, 51, 1);
+    }
+  }
+
+}
+
+/*:global{
+  .cls-2{
+    cursor: pointer !important;
+  }
+}*/
+
+
+
+.searchChangeMaintain{
+  margin-bottom: 0;
+  padding-top: 15px;
+  :global{
+    .ant-form-item-control{
+      line-height: 20px;
+    }
+  }
+}

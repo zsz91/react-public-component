@@ -20,7 +20,9 @@ export default class NormalTable extends Component {
   componentDidMount() {
     let scrollX = 0;
     for(let item of this.props.columns){
+      if(item!=null){
       scrollX = typeof item.width !== 'undefined' ? scrollX + item.width : scrollX + 80;
+    }
     }
     const width = document.getElementById(this.state.tableId).offsetWidth;
     if(width < scrollX){
@@ -32,7 +34,14 @@ export default class NormalTable extends Component {
 
 
   render(){
-    const { dataSource, columns, rowKey, handleSelectRow, Pagination } = this.props;
+    const { dataSource, columns, rowKey,
+            handleSelectRow, pagination, components,
+            loading,onChange
+    } = this.props;
+    /**
+     * 没有传rowSelection 传了handleSelectRow 时 使用 handleSelectRow 并封装rowSelection
+     * 传了rowSelection 直接使用
+     * */
     const rowSelection =  handleSelectRow === false ? null : {
       columnWidth: 30,
       fixed: true,
@@ -43,12 +52,15 @@ export default class NormalTable extends Component {
     return (
           <Table dataSource={dataSource}
                  columns={columns}
-                 rowKey={rowKey}
+                 components={components}
+                 rowKey={rowKey || 'key'}
+                 loading={loading}
                  id={this.state.tableId}
                  className={styles.NormalTable}
-                 pagination={Pagination}
+                 pagination={pagination ? pagination : false}
+                 onChange={onChange}
                  scroll={  scrollX > 0 ? { x: scrollX } : {}}
-                 rowSelection={rowSelection}
+                 rowSelection={ this.props.rowSelection !== 'undefined' ? this.props.rowSelection : rowSelection }
           />
     );
   }
@@ -62,60 +74,28 @@ NormalTable.propTypes = {
     PropTypes.func,
     PropTypes.bool,
   ]), // 行选择的事件,传false 表示不开放行选择 To Antd Table
-  Pagination:PropTypes.object, // 分页配置 To Antd Pagination
+  pagination: PropTypes.oneOfType([   //多种类型的数据
+    PropTypes.object,
+    PropTypes.bool,
+  ]),
+  components: PropTypes.object, //默认覆盖的 Table元素 基本没用
+  loading: PropTypes.bool,
+  onChange: PropTypes.func, // 分页、排序、筛选变化时触发
 };
 NormalTable.defaultProps = {
   rowKey: 'id',
   handleSelectRow: (selectedRowKeys, selectedRows)=>{console.log(selectedRowKeys,selectedRows)}, // false,
-  Pagination: {
+  pagination: {
     defaultCurrent: 1,
     total: 20,
     pageSize: 5,
     showQuickJumper: true,
     onChange: (current, size) => {console.log(current, size)},
   },
-  dataSource: [
-    {
-      id: '1',
-      name: 'asd',
-      code: '1sad',
-      level: '2',
-      desc: '3',
-      operation:'xx',
-    },
-    {
-      id: '2',
-      name: 'asd',
-      code: '1sad',
-      level: '2',
-      desc: '3',
-      operation:'xx',
-    },
-    {
-      id: '3',
-      name: 'asd',
-      code: '1sad',
-      level: '2',
-      desc: '3',
-      operation:'xx',
-    },
-    {
-      id: '4',
-      name: 'asd',
-      code: '1sad',
-      level: '2',
-      desc: '3',
-      operation:'xx',
-    },
-    {
-      id: '5',
-      name: 'asd',
-      code: '1sad',
-      level: '2',
-      desc: '3',
-      operation:'xx',
-    },
-  ],
+  loading: false,
+  components: undefined,
+  onChange: () => { console.log('NormalTable.onChange')},
+  dataSource: [],
   columns:
     [
       {
@@ -210,7 +190,7 @@ NormalTable.defaultProps = {
         fixed: 'right',
         width: 120,
         render: (text, record)=>{
-          return <span><a href="#">编辑 </a>|<a href="#"> 删除</a></span>
+          return <span><a>编辑 </a>|<a> 删除</a></span>
         }
       },
     ],

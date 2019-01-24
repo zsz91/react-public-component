@@ -114,10 +114,10 @@ FieldListWithoutBg.defaultProps = {
     }
   ],
   value: {
-    name: '钟是志',
-    number: '20091761',
-    age: 28,
-    idCard: '51102819900119001X',
+    name: 'xxx',
+    number: '20191761',
+    age: 22,
+    idCard: '511102811111111X',
     lessonNumber: '22',
     lessonCount: '22',
   },

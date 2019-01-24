@@ -67,13 +67,14 @@ export default class FormArray extends Component{
 
     if(['checkBox','selectMultiple','select'].indexOf(info.type) > -1){
       itemValue = typeof itemValue === 'number' ? itemValue.toString() : itemValue;
+      itemValue = typeof itemValue === 'boolean' ? itemValue + '' : itemValue;
       itemValue = info.type === 'selectMultiple' && !itemValue ? [] : itemValue;
     }else if(['datePicker'].indexOf(info.type) > -1){
       itemValue = itemValue ? moment(itemValue, info.format) : null
     }
     const defaultProps = {
-      readOnly: readOnly,
-      disabled: itemDisabled,
+      readOnly: this.props.readOnly ? true : readOnly,
+      disabled: this.props.disabled ? true : itemDisabled,
       value: itemValue,
       placeholder: placeholder,
       options: options,
@@ -109,7 +110,7 @@ export default class FormArray extends Component{
                                    style={{ width: '100%' }}
                                    onChange={(value)=>{changeValue(value, info.key)}}>
                                     {defaultProps.options.map((optionItem) => {
-                                      return <Option key={optionItem.key.toString()}>
+                                      return <Option key={ typeof optionItem.key !== 'boolean' ? optionItem.key + '' : optionItem.key }>
                                         {optionItem.name}
                                       </Option>
                                     })}
@@ -121,7 +122,7 @@ export default class FormArray extends Component{
                                    allowClear
                                    onChange={(value)=>{changeValue(value, info.key)}}>
                                   {defaultProps.options.map((optionItem) => {
-                                    return <Option key={optionItem.key.toString()}>
+                                    return <Option key={ typeof optionItem.key !== 'boolean' ? optionItem.key + '' : optionItem.key }>
                                       {optionItem.name}
                                     </Option>
                                   })}
@@ -130,16 +131,22 @@ export default class FormArray extends Component{
               case 'checkBox': //布尔值选择
                 fieldDom = <Checkbox checked={defaultProps.value}
                                      disabled={defaultProps.disabled}
-                                     onChange={(e)=>{changeValue(e.target.value, info.key)}}>
+                                     onChange={(e)=>{changeValue(e.target.checked, info.key)}}>
                                         {info.text}
                             </Checkbox>;
                 break;
               case 'datePicker': //日期选择
                 fieldDom = <DatePicker showTime={info.showTime}
                                        {...defaultProps}
+                                       style={{ width: '100%' }}
                                        format={info.format}
                                        onChange={(date,dateString)=>{this.datePickerOnchange(dateString, info.key)}}>
                             </DatePicker>;
+                break;
+              case 'textarea': //文本框
+                fieldDom = <TextArea {...defaultProps}
+                                     autosize={{minRows: 4, maxRows: 6 }}
+                                     onChange={(e)=>{changeValue(e.target.value, info.key)}}/>;
                 break;
              /* case 'button':
                 fieldDom = info.component;
@@ -182,10 +189,12 @@ export default class FormArray extends Component{
  * fileSpan : { big:5, small:4}
  *         small: 设置1366*768的屏幕 每一行显示几个字段  如 只显示3个 则 = 3
  *         big: 设置1920*1080的屏幕  每一行显示几个字段 同上
- * nameSpan { big:5, small:4}   同上
+ * nameSpan { big:5, small:4}   同上设置 一个字段的 字段名和填写的值所占的比例
  * */
 FormArray.propTypes = {
   config: PropTypes.array,
+  readOnly: PropTypes.bool,
+  disabled: PropTypes.bool,
   changeValue: PropTypes.func,
   value: PropTypes.object,
   fileSpan: PropTypes.object,
@@ -301,4 +310,5 @@ FormArray.defaultProps = {
     big: 10,
     small: 12,
   },
+  disabled: false,
 };
