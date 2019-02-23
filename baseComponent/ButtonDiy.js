@@ -14,12 +14,13 @@ export default class ButtonDiy extends Component {
 
 
   render(){
-    const { handleClick, icon, name, className, type ,htmlType} = this.props;
+    const { handleClick, icon, name, className, type ,htmlType, disabled} = this.props;
     return (
       <span className={styles.ButtonDiy}>
       <Button onClick={()=>{handleClick()}}
               className={styles[className]}
               type={type}
+              disabled={disabled}
               htmlType={htmlType}
       >
         {icon ? <Icon type={icon} /> : null}
@@ -36,12 +37,14 @@ ButtonDiy.propTypes = {
   handleClick: PropTypes.func, // click函数
   className: PropTypes.string, // classname
   type: PropTypes.string, // Button type
-  htmlType:PropTypes.string,
+  htmlType: PropTypes.string,
+  disabled: PropTypes.bool,
   loading: PropTypes.bool, //
 };
 ButtonDiy.defaultProps = {
   icon: '', //'plus'
   name:  '新建子部门',
+  disabled: false,
   type: 'primary',
   htmlType: 'button',
   loading: false,

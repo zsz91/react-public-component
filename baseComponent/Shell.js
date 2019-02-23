@@ -12,9 +12,11 @@ export default class Shell extends Component {
 
 
   render(){
-    const {children} = this.props;
+    const {children,styleShell = {} } = this.props;
       return (
-        <div className={styles.shell}>
+        <div className={styles.shell}
+             style={styleShell}
+        >
         <Row className={styles.row}>
           {children}
         </Row>

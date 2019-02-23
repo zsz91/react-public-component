@@ -21,7 +21,7 @@ export default class NormalTable extends Component {
     let scrollX = 0;
     for(let item of this.props.columns){
       if(item!=null){
-      scrollX = typeof item.width !== 'undefined' ? scrollX + item.width : scrollX + 80;
+      scrollX = typeof item.width !== 'undefined' ? scrollX + item.width : scrollX + 100;
     }
     }
     const width = document.getElementById(this.state.tableId).offsetWidth;
@@ -74,11 +74,11 @@ NormalTable.propTypes = {
     PropTypes.func,
     PropTypes.bool,
   ]), // 行选择的事件,传false 表示不开放行选择 To Antd Table
-  pagination: PropTypes.oneOfType([   //多种类型的数据
+  pagination: PropTypes.oneOfType([   // 多种类型的数据
     PropTypes.object,
     PropTypes.bool,
   ]),
-  components: PropTypes.object, //默认覆盖的 Table元素 基本没用
+  components: PropTypes.object, // 默认覆盖的 Table元素 基本没用
   loading: PropTypes.bool,
   onChange: PropTypes.func, // 分页、排序、筛选变化时触发
 };

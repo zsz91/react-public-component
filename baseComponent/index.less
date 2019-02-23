@@ -7,7 +7,21 @@
     }
   }
   .colDom{
+    :global{
+
+    }
   }
+}
+.spd{
+  padding: 0;
+  :global{
+    .ant-form-item{
+      margin-bottom: 6px;
+    }
+    .ant-tag, .ant-tag a, .ant-tag a:hover {
+      color: #84d945;
+    }
+}
 }
 
 .FieldList{
@@ -223,6 +237,12 @@
       color:@white;
       border-color:@white;
     }
+
+    &:disabled {
+      color: rgba(0, 0, 0, 0.25);
+      background-color: #f5f5f5;
+      border-color: #d9d9d9;
+    }
   }
   .primaryRed{
     font-size:14px;
@@ -328,4 +348,30 @@
       line-height: 20px;
     }
   }
+}
+
+.exportModal {
+  :global{
+    .ant-modal-body{
+      padding: 12px;
+    }
+    .ant-form-item{
+      margin-bottom: 0;
+    }
+    .ant-form-item-label{
+      text-align: left;
+    }
+  }
+}
+.DescriptionContext {
+  width: 98%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  word-break: break-word;
+  height: 500px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  color: black;
+  background-color: white;
 }
