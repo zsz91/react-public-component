@@ -111,6 +111,13 @@
   color:#333;
   font-weight:bold;
   cursor: default;
+
+  &.isSmall{
+    font-size: 14px;
+    height: 36px;
+    padding: 0 30px;
+    border-bottom: 1px solid #eee;
+  }
 }
 
 .CardDiy {
@@ -374,4 +381,127 @@
   font-size: 14px;
   color: black;
   background-color: white;
+}
+
+.Editable{
+  box-sizing: border-box;
+  margin: 0;
+  list-style: none;
+  position: relative;
+  display: inline-block;
+  padding: 4px 11px;
+  width: 100%;
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(0, 0, 0, 0.65);
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  transition: all .3s;
+  &:hover{
+    border-color: #29a6ff;
+    border-right-width: 1px !important;
+  }
+}
+
+.editorLayout {
+  line-height: normal;
+
+  :global{
+    .ql-container{
+      height: 400px;
+    }
+  }
+}
+
+// 新闻列表
+.horizonWrap {
+  margin-top: 20px;
+  .item{
+    margin-bottom: 20px;
+    cursor: pointer;
+    .itemInner{
+      transition: all .3s linear;
+      background-color: #fff;
+      height: 110px;
+      padding: 20px;
+      overflow: hidden;
+      display: flex;
+      &:hover{
+        box-shadow: 0px 7px 8px -4px rgba(0,0,0,0.2), 0px 12px 17px 2px rgba(0,0,0,0.14), 0px 5px 20px 4px rgba(0,0,0,0.12) !important;
+      }
+      .left{
+        flex:0 0 70px;
+        height: 70px;
+        background-color: rgb(132,192,240);
+        position: relative;
+        font-size: 26px;
+        color: #fff;
+        font-weight: 600;
+        span{
+          display: inline-block;
+          position: absolute;
+          top: 0px;
+          left: 5px;
+          &:last-child{
+            top: auto;
+            right: 5px;
+            bottom: 0;
+            left: auto;
+          }
+        }
+        &::before{
+          content: '';
+          width: 70px;
+          height: 1px;
+          background-color: #fff;
+          transform: rotateZ(-45deg);
+          display: block;
+          position: absolute;
+          top: 34px;
+          left: 0px;
+        }
+      }
+      .right{
+        padding-left: 20px;
+        flex:1;
+        overflow: hidden;
+        .title{
+          font-weight: 600;
+          color: #333;
+          font-size: 22px;
+          line-height: 1;
+          margin-bottom: 10px;
+        }
+        .content{
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          font-size: 14px;
+          line-height: 20px;
+          /* autoprefixer: off*/
+          -webkit-box-orient: vertical;
+          /* autoprefixer: on*/
+        }
+      }
+    }
+  }
+}
+
+.PieChart{
+  :global{
+    .pie-stat{
+      padding-top: 10px;
+    }
+  }
+}
+
+.ListTab{
+  :global{
+    .ant-tabs-bar{
+      margin-bottom: 0px;
+    }
+  }
 }

@@ -8,12 +8,12 @@ export default class ModalDiy extends Component {
   render(){
     const {children, title, handleOk,
            handleCancel, okText, cancelText,
-           visible, confirmLoading, footer, width, maskClosable} = this.props;
+           visible, confirmLoading, footer, width, maskClosable, style} = this.props;
     return (
       <Modal title={title}
              width={width ? width : 600}
              className={styles.modalDiy}
-             style={{marginTop:'50px',}}
+             style={style}
              okText={okText}
              visible={visible}
              maskClosable={maskClosable}
@@ -36,6 +36,7 @@ ModalDiy.propTypes = {
   handleCancel: PropTypes.func,
   confirmLoading:PropTypes.bool,
   maskClosable: PropTypes.bool,
+  style: PropTypes.object,
 };
 ModalDiy.defaultProps = {
   title: '修改',
@@ -46,4 +47,5 @@ ModalDiy.defaultProps = {
   visible: true,
   confirmLoading: false,
   maskClosable: false,
+  style: {marginTop:'50px',}
 };

@@ -1,0 +1,38 @@
+.customCollapse{
+  border: 0;
+
+  :global{
+    .ant-collapse-header{
+      cursor: default !important;
+    }
+    .ant-collapse-content{
+      border: 0!important;
+    }
+
+    .ant-collapse-item{
+      border: 0;
+    }
+
+    .ant-collapse-content-box{
+      padding-top: 0;
+    }
+  }
+
+  .headerBox{
+    display: flex;
+    width: 400px;
+    justify-content: space-between;
+
+    :global{
+      .ant-checkbox-wrapper{
+        font-weight: bold;
+      }
+    }
+
+    .zoomBtn{
+      color: #40a9ff;
+      cursor: pointer;
+    }
+  }
+
+}

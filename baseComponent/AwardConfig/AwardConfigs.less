@@ -1,0 +1,49 @@
+.configOut {
+  box-sizing: border-box;
+  border: 1px solid #eee;
+
+  .configTitle{
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+
+    .desc{
+      font-weight: normal;
+      color: #D2D2D2;
+    }
+  }
+
+  &>div{
+    border-bottom: 1px solid #eee;
+    padding: 10px 15px;
+
+    &.showBg{
+      background: #F3F6F9;
+    }
+
+    &:last-child{
+      border-bottom: 0;
+    }
+  }
+}
+
+.easyConfig{
+  border: 1px solid #E9F2FB;
+  color: rgba(0, 0, 0, 0.85);
+  display: flex;
+
+  .left{
+    box-sizing: border-box;
+    padding:  0 10px;
+    background: #E9F2FB;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .right{
+    padding: 10px;
+  }
+}

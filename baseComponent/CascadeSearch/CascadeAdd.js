@@ -12,7 +12,7 @@ import FormArray from '../FormArray';
 import PropTypes from 'prop-types';
 import * as service from './service';
 
-export default class CascadeSearch extends Component {
+export default class CascadeAdd extends Component {
 
   constructor(props) {
     super(props);
@@ -137,23 +137,10 @@ export default class CascadeSearch extends Component {
     });
   };
 
-  checkHasField(filedName) {
-    const config = this.state;
-
-    const result = config.find(item => {
-      return item.key === filedName;
-    });
-
-    return !!result;
-  }
-
   componentDidMount() {
     const { config } = this.state;
     const { value } = this.props;
     for (const item of config) {
-      if(item.type !== 'select'){
-        continue;
-      }
       if (item.key === 'institutionId') { // 学院
         service.queryInstitutionList().then((response) => {
           if(value.institutionId) {
@@ -171,7 +158,6 @@ export default class CascadeSearch extends Component {
       } else if (item.key === 'gradeId') { // 年级
         this.getGradeList();
       } else if (item.key === 'schYearId' || item.key === 'schoolYearId') { // 学年
-
         service.getSchYearList().then((response) => {
           if(typeof item.defaultValue !== 'undefined' && item.defaultValue){
             this.formStateChange(response[0].schYearId,'schYearId');
@@ -264,7 +250,7 @@ export default class CascadeSearch extends Component {
             resultIdList: this.getOptions(response, 'id', 'dictName'),
           });
         });
-      }else if(item.key === 'salaryMonth' && !['datePicker', 'monthPicker'].includes(item.type)){
+      }else if(item.key === 'salaryMonth'){
         service.queryListForConfig().then(response=>{
           if (!!item.defaultValue && response && response.constructor === Array && response.length > 0) {
             this.formStateChange(response[0].salaryMonth, 'salaryMonth');
@@ -376,9 +362,7 @@ export default class CascadeSearch extends Component {
           item.options = residenceCountyList;
           break;
         case 'state':
-          if (!item.isCustomOptions) {
-            item.options = inSchoolStatusList;
-          }
+          item.options = inSchoolStatusList;
           break;
         default:
           break;
@@ -394,11 +378,11 @@ export default class CascadeSearch extends Component {
     );
   }
 }
-CascadeSearch.propTypes = {
+CascadeAdd.propTypes = {
   config: PropTypes.array,
 };
 
-CascadeSearch.defaultProps = {
+CascadeAdd.defaultProps = {
   config: [],
 
 };

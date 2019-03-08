@@ -16,6 +16,8 @@ const politicalName = config.dictMap.政治面貌;
 const nationName = config.dictMap.民族;
 const postId =   config.dictMap.现任职务;
 const resultId = config.dictMap.处分结果;
+const SchoolStatus = config.dictMap.在校状态;
+//在校状态
 
 //现任职务: { pCode: "BM018", dType: "BM018" },
 
@@ -129,6 +131,67 @@ export function searchPeople(data) {
 }
 
 /**
+ * 根据条件搜索学生接口
+ * */
+export function searchStudent(data) {
+  return request(`${apiUrl}//StudentApi/queryPageForStudent`,
+    {
+      method: 'POST',
+      body: data,
+    }
+  );
+}
+
+/**
+ * 根据条件搜索当前辅导员下所有学生接口
+ * */
+export function searchMyStudent(data) {
+  return request(`${apiUrl}/LeaveStudentApi/getPageInstructorfotStu`,
+    {
+      method: 'POST',
+      body: data,
+    }
+  );
+}
+
+/**
+ * 根据条件搜索老师接口
+ * */
+export function searchTeacher(data) {
+  return request(`${apiUrl}/TeacherApi/queryPageForTeacher`,
+    {
+      method: 'POST',
+      body: data,
+    }
+  );
+}
+
+
+/**
+ * 查询学生户籍市州
+ * */
+export function findResidenceCity(data = {} ) {
+  return request(`${apiUrl}/PoorStudentApi/findResidenceCity`,
+    {
+      method: 'POST',
+      body: data,
+    }
+  );
+}
+
+/**
+ * 查询学生户籍区县
+ * */
+export function findResidenceCounty(data = {} ) {
+  return request(`${apiUrl}/PoorStudentApi/findResidenceCounty`,
+    {
+      method: 'POST',
+      body: data,
+    }
+  );
+}
+
+/**
  * 贫困等级
  * */
 export function getPoorLevelList() {
@@ -211,3 +274,53 @@ export function getResultId() {
   );
 }
 
+/**
+ * 岗位详情
+ */
+
+export function queryListForConfig(data=''){
+  return request(`${httpServer}/PostSalaryConfigApi/queryListForConfig`,
+    {
+      method: 'POST',
+      body: {
+        isDept:true
+      },
+    }
+  );
+}
+/**
+ *  违纪 认定结结果
+ *   学生状态
+ * */
+export function getInSchoolStatus() {
+  return request(`${httpServer}/DictionaryApi/getChildList`,
+    {
+      method: 'POST',
+      body: SchoolStatus,
+    }
+  );
+}
+
+/**
+ * 获取当前辅导员的班级列表
+ * */
+export function getMyClazzes(data={}) {
+  return request(`${apiUrl}/LeaveAdvanceApplyApi/getMyClazzes`,
+    {
+      method: 'POST',
+      body: data ,
+    }
+  );
+}
+
+/**
+ * 获取离校的批次列表
+ * */
+export function findAllLeaveBatch(data={}) {
+  return request(`${apiUrl}/LeaveBatchApi/findAllLeaveBatch`,
+    {
+      method: 'POST',
+      body: data ,
+    }
+  );
+}

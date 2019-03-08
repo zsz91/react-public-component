@@ -1,21 +1,15 @@
 /**
- * 钟是志
- * 2019年2月26日
- * 选择人员插件
- *
+ * 选择老师插件
  * */
-
-import { Modal } from 'antd';
+import { Divider, Modal, Popconfirm } from 'antd';
 import React, { Component, Fragment } from 'react';
 import ButtonDiy from '../ButtonDiy';
-import styles from '../index.less';
-import PropTypes from 'prop-types';
 import * as service from '../CascadeSearch/service';
 import CascadeSearch from '../CascadeSearch/CascadeSearch';
 import StandardTable from '@/components/StandardTable';
+import { Link } from 'react-router-dom';
 
-
-export default class SelectPeople extends Component {
+export default class SelectTeacher extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -63,7 +57,7 @@ export default class SelectPeople extends Component {
         current: current,
         pageSize: size,
       },
-    },()=>{
+    }, () => {
       this.getPeopleInfo();
     });
   };
@@ -75,19 +69,16 @@ export default class SelectPeople extends Component {
   searchDom = () => {
     let config = [
       {
-
-        name :"姓名",
-        key : 'realname',
+        name: '姓名',
+        key: 'name',
         type: 'input',
       },
       {
-        name: '部门',
-        key: 'deptId',
+        name: '所在院系',
+        key: 'institutionId',
         type: 'select',
       },
-      /*{
-        查询
-      },*/
+
     ];
     return (
       <CascadeSearch config={config}
@@ -101,13 +92,13 @@ export default class SelectPeople extends Component {
   };
 
   getPeopleInfo = () => {
-    const { pagination,formValues } = this.state;
+    const { pagination, formValues } = this.state;
     const data = {
-      ...formValues
+      ...formValues,
     };
     data.pageSize = pagination.pageSize;
     data.pageNo = pagination.current;
-    service.searchPeople(data).then((response) => {
+    service.searchTeacher(data).then((response) => {
       pagination.total = response.total;
       this.setState({
         list: response.rows,
@@ -123,13 +114,9 @@ export default class SelectPeople extends Component {
   };
 
   handleSelect = (record) => {
-    const { filedKey } = this.props;
-    let value = {
-      name:record.realname,
-      id: record.id,
-    };
-    console.log(filedKey);
-    this.props.onChange(value,filedKey);
+    const { config,filedKey,nameKey } = this.props;
+    this.props.onChange(record.id, filedKey);
+    this.props.onChange(record.name, nameKey);
     this.stateChange('showModal', false);
   };
 
@@ -138,37 +125,51 @@ export default class SelectPeople extends Component {
     const { showModal, list, pagination, selectedRows } = this.state;
     const columns = [
       {
+        title: '工号',
+        dataIndex: 'userName',
+      },
+      {
         title: '姓名',
-        dataIndex: 'realname',
+        dataIndex: 'name',
       },
       {
         title: '性别',
         dataIndex: 'genderName',
       },
       {
-        title: '部门',
-        dataIndex: 'deptName',
+        title: '民族',
+        dataIndex: 'nation',
       },
       {
         title: '政治面貌',
-        dataIndex: 'politicalStatusName',
+        dataIndex: 'politicalName',
       },
       {
-        title: '职位',
-        dataIndex: 'position',
+        title: '现任职务',
+        dataIndex: 'postName',
+      },
+      {
+        title: '现获职称',
+        dataIndex: 'jobTitleName',
       },
       {
         title: '手机号码',
         dataIndex: 'phone',
       },
       {
-        title: '所在单位',
+        title: '办公电话',
+        dataIndex: 'officePhone',
+      },
+      {
+        title: '所在院系',
         dataIndex: 'unitName',
       },
       {
         title: '操作',
         render: (text, record) => {
-          return (<a onClick={()=>{this.handleSelect(record)}}>选择</a>) ;
+          return (<a onClick={() => {
+            this.handleSelect(record);
+          }}>选择</a>);
         },
       },
     ];
@@ -177,15 +178,14 @@ export default class SelectPeople extends Component {
         {!showModal ?
           <Fragment>
             <span>
-              {this.props.value && typeof this.props.value.name !== 'undefined' ? this.props.value.name + '　　' : ''}
+              {this.props.value && typeof this.props.nameValue !== 'undefined' ? this.props.nameValue + '　　' : ''}
             </span>
-            {this.props.disabled ? null :  <ButtonDiy name={'选择'}
-                                                      className={'defaultBlue'}
-                                                      handleClick={this.showModal}/>}
-
+            {this.props.disabled ? null : <ButtonDiy name={'选择'}
+                                                     className={'defaultBlue'}
+                                                     handleClick={this.showModal}/>}
           </Fragment>
           :
-          <Modal title={'选择人员'}
+          <Modal title={'选择'}
                  visible={true}
                  width={1200}
                  maskClosable={false}
@@ -193,13 +193,13 @@ export default class SelectPeople extends Component {
                  onCancel={() => {
                    this.stateChange('showModal', false);
                  }}>
-            <div style={{overflowY:'auto',maxHeight:'500px'}}>
+            <div style={{ overflowY: 'auto', maxHeight: '500px' }}>
               {this.searchDom()}
               <div style={{ height: '54px', padding: '12px 0 12px 12px', float: 'right' }}>
                 <ButtonDiy name='查询'
                            handleClick={this.getPeopleInfo}/>
-        　　　  </div>
-                <div style={{height:'30px'}}></div>
+              </div>
+              <div style={{ height: '30px' }}></div>
               <StandardTable
                 rowKey="id"
                 selectedRows={selectedRows}
@@ -216,8 +216,8 @@ export default class SelectPeople extends Component {
   }
 }
 
-SelectPeople.propTypes = {};
-SelectPeople.defaultProps = {
+SelectTeacher.propTypes = {};
+SelectTeacher.defaultProps = {
   handleOk: () => {
     console.log('ok');
   },

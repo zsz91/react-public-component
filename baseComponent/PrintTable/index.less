@@ -1,0 +1,100 @@
+.printBox{
+  width: 650px;
+  box-sizing: border-box;
+  border: 1px solid #000;
+  padding: 10px;
+  color: #000;
+  font-size: 14px;
+  font-weight: bold;
+
+  .heading{
+    font-size: 18px;
+    text-align: center;
+    color: #000;
+    font-weight: bold;
+  }
+
+  .studentFill{
+    display: flex;
+    flex-wrap: wrap;
+
+    &>div{
+      position: relative;
+      margin-right: 5px;
+
+      &:last-child{
+        margin-right: 0;
+      }
+
+      span{
+        display: inline-block;
+        font-weight: normal;
+        min-width: 50px;
+        padding: 0 3px;
+        border-bottom: 1px solid #000;
+      }
+    }
+  }
+
+  .notice{
+    margin: 10px 0;
+  }
+
+  .departmentTable{
+    margin: 10px -10px;
+    border-top: 1px solid #000;
+
+    &>div:nth-child(odd){
+      box-sizing: border-box;
+      border-right: 1px solid #000;
+    }
+  }
+}
+
+.departmentItem {
+  height: 210px;
+  border-bottom: 1px solid #000;
+  font-size: 12px;
+  overflow: hidden;
+
+  *{
+    margin: 0;
+  }
+
+  .departmentName{
+    height: 100%;
+    border-right: 1px solid #000;
+    box-sizing: border-box;
+    text-align: center;
+    writing-mode: tb-rl;
+    line-height: 54px;
+    letter-spacing: .5em;
+    font-size: 14px;
+  }
+
+  .departmentContent{
+    &>div:first-child{
+      padding: 5px;
+      border-bottom: 1px solid #000;
+    }
+
+    &>div:last-child{
+      padding: 5px;
+      display: flex;
+      align-items: center;
+      height: 181px;
+      position: relative;
+      overflow: hidden;
+
+      img {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        pointer-events: none;
+      }
+    }
+  }
+}

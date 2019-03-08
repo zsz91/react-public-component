@@ -43,7 +43,7 @@ export default class FieldList extends Component{
                           <Col xl={24 - nameSpan.small}
                                xxl={24 - nameSpan.big}
                                className={styles.discrib}>
-                              {value[item.key]}
+                              {item.format ? item.format(value[item.key]): value[item.key]}
                           </Col>
                         </Row>
                  </Col>
@@ -70,6 +70,16 @@ export default class FieldList extends Component{
  * value: 字段列表中每个字段的值 {name:'xxx', phone:'123123456',}
  *
  * */
+/**
+ * 2019/02/23
+ * 赖井平 修改
+ * value :{
+ *   name: string,
+ *   key: string,
+ *   format: function  // 用于格式化显示
+ * }
+ *
+ */
 FieldList.propTypes = {
   config: PropTypes.array,
   value: PropTypes.object,

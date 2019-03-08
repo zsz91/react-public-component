@@ -14,10 +14,10 @@ export default class ButtonDiy extends Component {
 
 
   render(){
-    const { handleClick, icon, name, className, type ,htmlType, disabled} = this.props;
+    const { handleClick, icon, name, className, type ,htmlType,loading, disabled} = this.props;
     return (
       <span className={styles.ButtonDiy}>
-      <Button onClick={()=>{handleClick()}}
+      <Button onClick={()=>{handleClick()}} loading={loading}
               className={styles[className]}
               type={type}
               disabled={disabled}
