@@ -21,9 +21,37 @@ export default class CascadeSearch2lx extends Component {
       leaveBatchIdList: [], // 批次IdList
     };
   }
+
   formStateChange = (value, key) => {
+    this.setApiKeyValue(value, key);
     this.props.changeValue(value, key);
   };
+
+  setApiKeyValue = (value,key) => {
+    const { config } = this.state;
+    const Index = config.findIndex((item)=>{
+      return item.key === key;
+    });
+    if(Index !== -1 && config[Index].apiKey){
+      let opt = config[Index].options;
+      const apiKeyIndex = opt.findIndex((x)=>{
+        return x.key.toString() === value;
+      });
+      if(apiKeyIndex === -1){
+        return false;
+      }
+      this.props.changeValue(opt[apiKeyIndex].name, config[Index].apiKey);
+    }
+  };
+
+  static getDerivedStateFromProps(props, state) {
+    let conf = props.config;
+    const config = JSON.parse(JSON.stringify(conf)) || [];
+    return {
+      config: config,
+    };
+
+  }
 
   getOptions = (response, key = 'id', name = 'name') => {
     if(!response || response.constructor !== Array){
@@ -44,7 +72,7 @@ export default class CascadeSearch2lx extends Component {
   componentDidMount() {
     const { config } = this.state;
     for (const item of config) {
-      if (item.key === 'clazzId') {  // 班级
+      if (item.key === 'clazzId') {  // 获取当前用户(辅导员)管理的班级
         service.getMyClazzes().then((response) => {
           this.setState({
             clazzList: this.getOptions(response, 'id', 'fullName'),

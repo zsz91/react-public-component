@@ -25,6 +25,16 @@
       border-bottom: 0;
     }
   }
+
+  .hasTextarea{
+    display: flex;
+
+    :global{
+      .ant-form-item-control-wrapper{
+        flex-grow: 1;
+      }
+    }
+  }
 }
 
 .easyConfig{
@@ -42,8 +52,82 @@
     align-items: center;
     flex-wrap: wrap;
   }
-
+   .specialWidth{
+     :global{
+       .ant-form-item-control-wrapper{
+         width: 100%;
+       }
+     }
+   }
   .right{
     padding: 10px;
+
+  }
+}
+
+.teacherConfig{
+  line-height: 40px;
+  background: #F3F6F9;
+  margin: 0 0 10px;
+  padding: 12px 0;
+
+  :global{
+    .ant-checkbox-group{
+      line-height: 40px;
+      width: 100%;
+    }
+  }
+}
+
+.filterBox{
+
+  :global{
+    .ant-input-number{
+      margin: 0 10px;
+    }
+
+    .ant-checkbox-group{
+      line-height: inherit;
+    }
+
+  }
+}
+
+.clazzApplyInfo {
+
+  :global{
+    .ant-col-12{
+      display: flex;
+      border-bottom: 1px solid #eee;
+      border-right: 1px solid #eee;
+    }
+
+    .ant-row{
+      line-height: 40px;
+      display: flex;
+      flex-wrap: wrap;
+      padding: 0;
+    }
+
+    .ant-input-number{
+      width: 60px;
+    }
+  }
+
+  .label{
+    text-align: right;
+    flex: 0 0 160px;
+    padding: 0 10px;
+    margin-right: 10px;
+    background: #E9F2FB;
+  }
+
+  .centerTextBox{
+    display: inline-block;
+    width: 60px;
+    text-align: center;
+  }
+  .cRed{
+    color: red;
   }
 }

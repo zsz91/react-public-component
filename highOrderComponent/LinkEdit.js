@@ -19,7 +19,10 @@ export default class LinkEdit extends Component {
     };
   }
   render() {
-    const { name, path, record} = this.props;
+    const { name, path, record, isNeedRender} = this.props;
+    if(isNeedRender && !isNeedRender(record)){
+      return null;
+    }
     return (
       <Link to={{ pathname: path, state: { currentObj: record,} }} >
         {name}
@@ -30,6 +33,7 @@ export default class LinkEdit extends Component {
 LinkEdit.propTypes = {
   name: PropTypes.string, // 文本名称
   path : PropTypes.string.isRequired, // 路径
+  isNeedRender: PropTypes.func, // 是否需要渲染dom  返回false 不渲染
 };
 
 LinkEdit.defaultProps = {

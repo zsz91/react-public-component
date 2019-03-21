@@ -10,7 +10,7 @@
 import ModalDiy from '@/baseComponent/ModalDiy';
 import CascadeAdd from '../baseComponent/CascadeSearch/CascadeAdd';
 import React, { Component, Fragment } from 'react';
-import {checkDate} from '../baseComponent/utils';
+import {checkDate, deepCopy} from '../baseComponent/utils';
 import { message } from 'antd';
 import PropTypes from 'prop-types';
 import * as service from './Service';
@@ -19,37 +19,39 @@ export default class ModalEdit extends Component {
 
   constructor(props) {
     super(props);
-    const { includeReadOnly, isRenderNeedShow, record, isShowReadOnly } = this.props;
-    let showType = 2;
-
-    if(includeReadOnly){
-      showType = 3 ;
-      this.showTypeChange(3);
-    }
-
-    if(isRenderNeedShow && !isRenderNeedShow(record)){
-      showType = 4 ;
-    }
-    if(isShowReadOnly && isShowReadOnly(record)) {
-      showType = 1 ;
-    }
+    const { fields } = this.props;
     this.state = {
       showModal: false,
       formValues: {}, // 将默认值传进去
       disabled: false,
-      showType: showType, // 1 只查看 2只编辑 3查看和编辑一起显示 4 什么都不显示
+      showType: 2,
+      fields: deepCopy(fields),
     };
   }
 
-  showTypeChange = (value) => {
-    this.setState({
-      showType: value,
-    })
-  };
-
   componentDidMount() {
     this.initData();
+    this.setShowType();
   }
+
+  setShowType = () => {
+    const { includeReadOnly, isRenderNeedShow, record, isShowReadOnly } = this.props;
+    let showType = 2; // 2只编辑
+
+    if(includeReadOnly){
+      showType = 3 ; // 3查看和编辑一起显示
+    }
+
+    if(isRenderNeedShow && !isRenderNeedShow(record)){
+      showType = 4 ; // 4 什么都不显示
+    }
+    if(isShowReadOnly && isShowReadOnly(record)) {
+      showType = 1 ; // 1 只查看
+    }
+    this.setState({
+      showType,
+    });
+  };
 
   changeShow = () => {
     const { showModal } = this.state;
@@ -74,16 +76,25 @@ export default class ModalEdit extends Component {
   };
 
   initData = () => {
-    const { fields, record } = this.props;
+    const { record, beforeShowChangeOption, } = this.props;
+    const { fields } = this.state;
     let formValues = {};
     for (let item of fields) {
-      if(item.nameKey && record[item.nameKey]){
-        formValues[item.nameKey] = record[item.nameKey];
-      }
-      if (record[item.key] ||  record[item.key] === 0) {
-        formValues[item.key] = record[item.key];
+      const giveValue = ['nameKey', 'endKey', 'key'];
+      for(let x of giveValue){
+        if(item[x] && (record[item[x]] || record[item[x]] === 0 || record[item[x]] === false )){
+          formValues[item[x]] = record[item[x]];
+        }
       }
     }
+    if(beforeShowChangeOption){
+      beforeShowChangeOption(record,formValues, fields).then((res)=>{
+          this.setState({
+            fields: res,
+          })
+      });
+    }
+
     this.setState({
       formValues: formValues,
     })
@@ -98,8 +109,8 @@ export default class ModalEdit extends Component {
   };
 
   handleOk = () => {
-    let { formValues } = this.state;
-    const { fields, url, responseCallBack, getPage, record, beforeUpdate } = this.props;
+    let { formValues, fields } = this.state;
+    const { url, responseCallBack, getPage, record, beforeUpdate, checkBeforeUpdate } = this.props;
     for (let item of fields) {
       if (item.required && !formValues[item.key] && formValues[item.key] !== 0) {
         message.warning(`${item.name}是必填项,请填写`);
@@ -116,6 +127,15 @@ export default class ModalEdit extends Component {
         }
       }
     }
+
+    if(checkBeforeUpdate){
+      const res = checkBeforeUpdate(record,formValues);
+      if(res.type === false){
+        message.warning(res.message);
+        return false;
+      }
+    }
+
     if (beforeUpdate) {
       const data = beforeUpdate(record,formValues);
       formValues = {
@@ -123,7 +143,6 @@ export default class ModalEdit extends Component {
         ...data,
       };
     }
-
     service.addOrUpdate(formValues, url).then((response) => {
       if (!responseCallBack(response)) {
         this.changeShow();
@@ -160,11 +179,9 @@ export default class ModalEdit extends Component {
     }
   };
 
-
   render() {
-    const { showModal, formValues,disabled } = this.state;
-    const { name, fields, } = this.props;
-
+    const { showModal, formValues, disabled, fields } = this.state;
+    const { name } = this.props;
     return (
       <Fragment>
         {this.dom()}

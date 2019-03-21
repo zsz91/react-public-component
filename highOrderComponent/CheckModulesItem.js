@@ -18,12 +18,19 @@ export default class CheckModulesItem extends Component{
   };
 
   getHeaderDom() {
-    const { checkboxAttr } = this.props;
+    const { checkboxAttr, data } = this.props;
     const { activeKey } = this.state;
 
     return (
       <div className={styles.headerBox}>
-        <Checkbox value={checkboxAttr.value} disabled={checkboxAttr.disabled}>{checkboxAttr.title}</Checkbox>
+        <Checkbox checked={data[checkboxAttr.value]}
+                  disabled={checkboxAttr.disabled}
+                  onChange={(e)=>{
+                    this.props.onChange(e.target.checked, checkboxAttr.value);
+                  }}
+        >
+          {checkboxAttr.title}
+        </Checkbox>
         {
           activeKey
             ?<div className={styles.zoomBtn} onClick={()=>{this.changeShowState(null)}}>
@@ -64,5 +71,8 @@ CheckModulesItem.defaultProps = {
     value: 'A',
     title: '基本信息',
     disabled: false,
+  },
+  data:{
+
   }
 };

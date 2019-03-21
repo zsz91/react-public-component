@@ -78,3 +78,54 @@ export  function deepCopy(obj, parent = null) {
   }
   return result;
 }
+
+/**
+ * 获取表单元素中每个元素的值,
+ * @param type
+ * @param e
+ * @param other
+ * @returns {*|boolean}
+ */
+export function getFormElemValue(type, e, other) {
+  let value = e;
+
+  switch (type) {
+    case 'input':
+      value = e.target.value;
+      break;
+    case 'checkbox':
+      value = e.target.checked;
+      break;
+    case 'textarea':
+      value = e.target.value;
+      break;
+    case 'buttonUpload':
+      value = e.url;
+      break;
+    default:
+      break;
+  }
+
+  return value;
+}
+
+/**
+ * 生成随机字符串
+ * */
+export function randomStr(){
+ return Math.random().toString(36).substr(2);
+}
+
+export function isJSON(str) {
+  if (typeof str == 'string') {
+    try {
+      JSON.parse(str);
+      if(typeof JSON.parse(str) === 'number'){
+        return false;
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+};

@@ -14,8 +14,9 @@ export default class ButtonListDom extends Component {
   }
 
   render() {
-    const { config, getPage, selectRows } = this.props;
-    return (<div style={{ height: '50px', padding: '12px 0 12px 12px' }}>
+    const { config, getPage, selectRows, formValues, children } = this.props;
+    return (<div style={{ height: '50px', padding: '12px 0 12px 12px', positon:'relative'}}>
+
       {config.map((item, i) => {
         switch (item.component) {
           case 'ModalForm':  // 新增按钮 + 弹窗
@@ -54,11 +55,22 @@ export default class ButtonListDom extends Component {
                                handleSelectRows={this.props.handleSelectRows}
                                getPage={getPage}
                                selectRows={selectRows}/>;
-              default:
-              return null;
+          case 'OpenUrl': // 点击按钮 打开一个新窗口
+            return window.open(item.url);
+          case "Normal":
+            return(
+            <ButtonDiy name={item.name}
+                       key={item.type}
+                       className={item.className || 'defaultBule'}
+                       handleClick={() => {item.handleClick(selectRows, formValues)}}
+              />);
+          default:
+                break;
+            //  return <ButtonDiy></ButtonDiy>;
 
           }
           })}
+          <span style={{display:'inline-block'}}>{children}</span>
           </div>);
       }
       }

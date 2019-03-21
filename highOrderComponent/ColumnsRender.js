@@ -81,7 +81,7 @@ export default class ColumnsRender extends Component {
         />;
         break;
       case 'translateText':
-        if(!text && text !== 0){
+        if(!text && text !== 0 && text !== false){
           dom = '';
         }else {
           for(let item of config.options){
@@ -92,7 +92,7 @@ export default class ColumnsRender extends Component {
         }
         break;
       default:
-        dom = 'text';
+        dom = <p>text</p>;
         break;
     }
     return dom;
@@ -103,7 +103,8 @@ ColumnsRender.propTypes = {
   record: PropTypes.object.isRequired,
   text: PropTypes.oneOfType([
       PropTypes.string,
-      PropTypes.number,
+    PropTypes.number,
+    PropTypes.bool,
     ]),
   config: PropTypes.object, // 列的配置信息
   getPage: PropTypes.func,

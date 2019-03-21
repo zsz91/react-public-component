@@ -11,29 +11,13 @@ import styles from '../index.less';
 import FormArray from '../FormArray';
 import PropTypes from 'prop-types';
 import * as service from './service';
-
+import {getInfo} from '../../highOrderComponent/Service';
 export default class CascadeSearch extends Component {
 
   constructor(props) {
     super(props);
-    let configKeys = {};
-    let config = JSON.parse(JSON.stringify(this.props.config)) || [];
-    let j = 0;
-    for(let i = 0; i < this.props.config.length; i++){
-      let item = this.props.config[i];
-      if(item.key === 'majorId'){
-        j = i;
-      }
-      configKeys[item.key] = true;
-    }
-    if(typeof configKeys.majorId !== 'undefined' && typeof configKeys.gradeId === 'undefined'){
-      config.splice(j,0,{
-        key:'gradeId',
-        name: '年级',
-        type: 'select',
-      })
-    }
 
+    let config = this.configInit(this.props.config);
     this.state = {
       gradeList: [], // 年级
       schYearIdList: [], // 学年
@@ -52,10 +36,65 @@ export default class CascadeSearch extends Component {
       resultIdList: [], // 学生违纪管理 认定结果枚举 数据字典\
       inSchoolStatusList: [], // 在校状态
       residenceCityList: [], // 户籍市州
+      eduLenIdList: [], // 学历层次 学制
+      campusList:[],//校区
+      disciplineList:[],//科类
     };
   }
 
+  static getDerivedStateFromProps(props, state) {
+    let configKeys = {};
+    let conf = props.config;
+    const config = JSON.parse(JSON.stringify(conf)) || [];
+    let j = 0;
+    for (let i = 0; i < conf.length; i++) {
+      let item = conf[i];
+      if (item.key === 'majorId') {
+        j = i;
+      }
+      configKeys[item.key] = true;
+    }
+    if (typeof configKeys.majorId !== 'undefined' && typeof configKeys.gradeId === 'undefined') {
+      config.splice(j, 0, {
+        key: 'gradeId',
+        name: '年级',
+        type: 'select',
+      });
+    }
+    return {
+      config: config,
+    };
+
+  }
+
+  configInit = (conf) => {
+    let configKeys = {};
+    const config = JSON.parse(JSON.stringify(conf)) || [];
+    let j = 0;
+    for (let i = 0; i < conf.length; i++) {
+      let item = conf[i];
+      if (item.key === 'majorId') {
+        j = i;
+      }
+      configKeys[item.key] = true;
+    }
+    if (typeof configKeys.majorId !== 'undefined' && typeof configKeys.gradeId === 'undefined') {
+      config.splice(j, 0, {
+        key: 'gradeId',
+        name: '年级',
+        type: 'select',
+      });
+    }
+    return config;
+  };
+
   getMajor = (id) => {
+    const haveMajor = this.state.config.findIndex((item)=>{
+      return item.key === 'majorId'
+    });
+    if(haveMajor === -1){
+      return false;
+    }
     service.queryMajorList(id).then((response) => {
       this.setState({
         majorList: this.getOptions(response),
@@ -64,7 +103,7 @@ export default class CascadeSearch extends Component {
   };
 
   getClazzId = (data = {}) => {
-    if(!data.gradeId || !data.majorId){
+    if (!data.gradeId || !data.majorId) {
       this.setState({
         clazzList: [],
       });
@@ -79,7 +118,6 @@ export default class CascadeSearch extends Component {
   };
 
   formStateChange = (value, key) => {
-
     /*
     * 选择了学院才能选专业
     * 选择了专业和年级 才能选班级
@@ -90,7 +128,7 @@ export default class CascadeSearch extends Component {
         this.getMajor(value);
         break;
       case 'majorId':
-        if(!!this.props.value.gradeId){
+        if (!!this.props.value.gradeId) {
           const data = {
             gradeId: this.props.value.gradeId,
             majorId: value,
@@ -99,7 +137,7 @@ export default class CascadeSearch extends Component {
         }
         break;
       case 'gradeId':
-        if(!!this.props.value.majorId){
+        if (!!this.props.value.majorId) {
           const data = {
             majorId: this.props.value.majorId,
             gradeId: value,
@@ -110,11 +148,33 @@ export default class CascadeSearch extends Component {
       default:
         break;
     }
+
+    this.setApiKeyValue(value, key);
     this.props.changeValue(value, key);
   };
 
+  // 如果在字段的config 上设置了apiKey 则给apiKey 赋值枚举值的 name
+  setApiKeyValue = (value,key) => {
+    const { config } = this.state;
+    const Index = config.findIndex((item)=>{
+      return item.key === key;
+    });
+    if(Index !== -1 && config[Index].apiKey){
+      let opt = config[Index].options;
+      const apiKeyIndex = opt.findIndex((x)=>{
+        return x.key.toString() === value;
+      });
+      if(apiKeyIndex === -1){
+        return false;
+      }
+      this.props.changeValue(opt[apiKeyIndex].name, config[Index].apiKey);
+    }
+
+  };
+
+
   getOptions = (response, key = 'id', name = 'name') => {
-    if(!response || response.constructor !== Array){
+    if (!response || response.constructor !== Array) {
       return [];
     }
     let options = [];
@@ -122,7 +182,7 @@ export default class CascadeSearch extends Component {
       options.push(
         {
           key: item[key],
-          name:item[name],
+          name: item[name],
 
         });
     }
@@ -139,28 +199,27 @@ export default class CascadeSearch extends Component {
 
   checkHasField(filedName) {
     const config = this.state;
-
     const result = config.find(item => {
       return item.key === filedName;
     });
-
     return !!result;
   }
 
   componentDidMount() {
     const { config } = this.state;
     const { value } = this.props;
+    
     for (const item of config) {
-      if(item.type !== 'select'){
+      if (item.type !== 'select') {
         continue;
       }
       if (item.key === 'institutionId') { // 学院
         service.queryInstitutionList().then((response) => {
-          if(value.institutionId) {
+          if (value.institutionId) {
             this.getMajor(value.institutionId);
           }
 
-          if(value.majorId) {
+          if (value.majorId) {
             this.formStateChange(value.majorId, 'majorId');
           }
 
@@ -173,8 +232,8 @@ export default class CascadeSearch extends Component {
       } else if (item.key === 'schYearId' || item.key === 'schoolYearId') { // 学年
 
         service.getSchYearList().then((response) => {
-          if(typeof item.defaultValue !== 'undefined' && item.defaultValue){
-            this.formStateChange(response[0].schYearId,'schYearId');
+          if (typeof item.defaultValue !== 'undefined' && item.defaultValue) {
+            this.formStateChange(response[0].schYearId, 'schYearId');
           }
           this.setState({
             schYearIdList: this.getOptions(response, 'schYearId', 'schYearName'),
@@ -182,8 +241,8 @@ export default class CascadeSearch extends Component {
         });
       } else if (item.key === 'termId') {  // 学期
         service.getTermList().then((response) => {
-          if(typeof item.defaultValue !== 'undefined' && item.defaultValue){
-            this.formStateChange(response[0].id,'termId');
+          if (typeof item.defaultValue !== 'undefined' && item.defaultValue) {
+            this.formStateChange(response[0].id, 'termId');
           }
           this.setState({
             termList: this.getOptions(response, 'id', 'name'),
@@ -195,26 +254,39 @@ export default class CascadeSearch extends Component {
             poorLevelList: this.getOptions(response, 'id', 'dictName'),
           });
         });
-      }else if (item.key === 'nationId') {
+      } else if (item.key === 'eduLenId' || item.key === 'educLenId') {
+        service.getEduLenIdList().then((response) => {
+          this.setState({
+            eduLenIdList: this.getOptions(response, 'id', 'dictName'),
+          });
+        });
+      } else if (item.key === 'nationId') {
         service.getNationName().then((response) => {
           this.setState({
             nationNameList: this.getOptions(response, 'id', 'dictName'),
           });
         });
-      }else if (item.key === 'politicalId') {
+      } else if (item.key === 'politicalId') {
         service.getPoliticalName().then((response) => {
           this.setState({
             politicalNameList: this.getOptions(response, 'id', 'dictName'),
           });
         });
-      }else if (item.key === 'genderId') {
+      } else if (item.key === 'genderId') {
         service.getStudentGender().then((response) => {
           this.setState({
             genderList: this.getOptions(response, 'id', 'dictName'),
           });
         });
-      }
-      else if (item.key === 'deptIds' || item.key === 'deptId') {
+      } else if (item.key === 'deptIds' || item.key === 'deptId') { // 用工部门
+        if(item.optionUrl){
+          getInfo({},item.optionUrl).then((response)=>{
+            this.setState({
+              deptList: this.getOptions(response, 'deptId', 'deptName'),
+            });
+          });
+          return true;
+        }
         service.queryForEmploymentDeptList().then((response) => {
           this.setState({
             deptList: this.getOptions(response, 'id', 'deptName'),
@@ -233,19 +305,19 @@ export default class CascadeSearch extends Component {
           });
         });
       }
-        // postId 有两种 一种是现任职务- 教师管理需要用 一种是部门里面的岗位名称
-        // 在教师管理页面加一个配置项 区分开 item.from = 'dictMap'
+      // postId 有两种 一种是现任职务- 教师管理需要用 一种是部门里面的岗位名称
+      // 在教师管理页面加一个配置项 区分开 item.from = 'dictMap'
       else if (item.key === 'postId') {
         /**
          * 现任职务
          * */
-        if(typeof item.from !== 'undefined' && item.from === 'dictMap'){
+        if (typeof item.from !== 'undefined' && item.from === 'dictMap') {
           service.getPostId().then((response) => {
             this.setState({
               postList: this.getOptions(response, 'id', 'dictName'),
             });
           });
-        }else{
+        } else {
           /**
            * 岗位
            */
@@ -257,41 +329,49 @@ export default class CascadeSearch extends Component {
         }
 
 
-      }
-      else if (item.key === 'cognizanceId') {
+      } else if (item.key === 'cognizanceId') {
         service.getResultId().then((response) => {
           this.setState({
             resultIdList: this.getOptions(response, 'id', 'dictName'),
           });
         });
-      }else if(item.key === 'salaryMonth' && !['datePicker', 'monthPicker'].includes(item.type)){
-        service.queryListForConfig().then(response=>{
+      } else if (item.key === 'salaryMonth' && !['datePicker', 'monthPicker'].includes(item.type)) {
+        service.queryListForConfig().then(response => {
           if (!!item.defaultValue && response && response.constructor === Array && response.length > 0) {
             this.formStateChange(response[0].salaryMonth, 'salaryMonth');
           }
           this.setState({
             salaryMonthList: this.getOptions(response, 'salaryMonth', 'salaryMonth'),
           });
-        })
-      }
-      else if(item.key === 'residenceCity'){
-        service.findResidenceCity().then(response=>{
+        });
+      } else if (item.key === 'residenceCity') {
+        service.findResidenceCity().then(response => {
           this.setState({
             residenceCityList: this.getOptions(response, 'residenceCity', 'residenceCity'),
           });
-        })
-      }
-      else if(item.key === 'residenceCounty'){
-        service.findResidenceCounty().then(response=>{
+        });
+      } else if (item.key === 'residenceCounty') {
+        service.findResidenceCounty().then(response => {
           this.setState({
             residenceCountyList: this.getOptions(response, 'residenceCounty', 'residenceCounty'),
           });
-        })
-      }
-      else if (item.key === 'state') {
+        });
+      } else if (item.key === 'state') {
         service.getInSchoolStatus().then((response) => {
           this.setState({
             inSchoolStatusList: this.getOptions(response, 'id', 'dictName'),
+          });
+        });
+      } else if (item.key === 'campusId') {
+        service.getXQList().then((response) => {
+          this.setState({
+            campusList: this.getOptions(response, 'id', 'name'),
+          });
+        });
+      }else if (item.key === 'disciplineId') { //科类
+        service.getKeLei().then((response) => {
+          this.setState({
+            disciplineList: this.getOptions(response, 'id', 'dictName'),
           });
         });
       }
@@ -306,8 +386,8 @@ export default class CascadeSearch extends Component {
       config, institutionList, majorList, clazzList,
       gradeList, schYearIdList, poorLevelList, termList,
       deptList, publishList, genderList, politicalNameList, nationNameList,
-      postList,resultIdList,salaryMonthList,inSchoolStatusList,residenceCityList,
-      residenceCountyList,
+      postList, resultIdList, salaryMonthList, inSchoolStatusList, residenceCityList,
+      residenceCountyList, eduLenIdList,campusList,disciplineList
     } = this.state;
     for (let item of config) {
       switch (item.key) {
@@ -368,13 +448,25 @@ export default class CascadeSearch extends Component {
           break;
         case 'salaryMonth':
           item.options = salaryMonthList;
-          break;  
+          break;
         case 'residenceCity':
           item.options = residenceCityList;
           break;
         case 'residenceCounty':
           item.options = residenceCountyList;
           break;
+        case 'eduLenId':
+          item.options = eduLenIdList;
+          break;
+        case 'educLenId':
+          item.options = eduLenIdList;
+          break; 
+        case 'campusId':
+          item.options = campusList;
+          break; 
+        case 'disciplineId':
+          item.options = disciplineList;
+          break;    
         case 'state':
           if (!item.isCustomOptions) {
             item.options = inSchoolStatusList;

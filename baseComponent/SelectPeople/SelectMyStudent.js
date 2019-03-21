@@ -126,7 +126,10 @@ export default class SelectMyStudent extends Component {
   render() {
     const { handleOk } = this.props;
     const { showModal, list, pagination, selectedRows } = this.state;
-    const columns = [
+    const columns = [{
+    title: '序号',
+    render: (text, record,index) => (index+1),
+  },
       {
         title: '学号',
         dataIndex: 'studentNo',

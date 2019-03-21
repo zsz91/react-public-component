@@ -5,9 +5,23 @@ import PropTypes from 'prop-types';
 import styles from './AwardConfigs.less';
 
 export default class ShowInfo extends Component{
-  state = {
+  constructor(props) {
+    super(props);
 
+    this.state = {
+      data: props.data || {}
+    };
+  }
+
+  getData = () => {
+    return this.state.data;
   };
+
+  componentDidMount() {
+    const { onRef, name } = this.props;
+
+    onRef && onRef(name, this);
+  }
 
   render() {
     const { isShowBlock, title, fieldList, fieldLayout, data, fieldListRow, fieldRowLayout, desc } = this.props;

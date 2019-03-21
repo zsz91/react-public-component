@@ -74,15 +74,18 @@ export default class ModalForm extends Component {
       }
     }
     let postData;
+    let data = {
+      ...formValues,
+    };
     if(beforeSubmit){
       postData = beforeSubmit(this.props, formValues);
-      formValues = {
-        ...formValues,
+      data = {
+        ...data,
         ...postData,
       }
     }
 
-    service.addOrUpdate(formValues,url).then((response)=>{
+    service.addOrUpdate(data,url).then((response)=>{
           if(!responseCallBack(response)){
             this.changeShow();
             return false;

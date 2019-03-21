@@ -17,8 +17,9 @@ import {
   Upload,
   Icon,
   InputNumber,
+  Cascader,
 } from 'antd';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import styles from './index.less';
 import PropTypes from 'prop-types';
 import moment from 'moment';
@@ -38,6 +39,8 @@ const RadioGroup = Radio.Group;
 const Option = Select.Option;
 const { TextArea } = Input;
 const FormItem = Form.Item;
+import ButtonUpload from '@/baseComponent/ButtonUpload';
+
 const CheckboxGroup = Checkbox.Group;
 const { MonthPicker, RangePicker } = DatePicker;
 
@@ -113,12 +116,11 @@ export default class FormArray extends Component {
     if (['select', 'radioGroup'].indexOf(info.type) > -1) {
       itemValue = typeof itemValue === 'number' ? itemValue.toString() : itemValue;
       itemValue = typeof itemValue === 'boolean' ? itemValue + '' : itemValue;
-    } else if(['selectMultiple','checkBoxMutiple'].indexOf(info.type) > -1){
+    } else if (['selectMultiple', 'checkBoxMutiple', 'cascader'].indexOf(info.type) > -1) {
       itemValue = typeof itemValue === 'number' ? itemValue.toString() : itemValue; // 数字变成 字符串
       itemValue = typeof itemValue === 'string' && itemValue ? itemValue.split(',') : itemValue;  // 有值且值是字符串则 变成数组
       itemValue = !itemValue ? [] : itemValue; // 没有值则变成空数组
-    }
-    else if (['datePicker', 'monthPicker'].indexOf(info.type) > -1) {
+    } else if (['datePicker', 'monthPicker'].indexOf(info.type) > -1) {
       if (typeof itemValue !== 'object') {
         if (itemValue) {
           itemValue = moment(itemValue);
@@ -160,7 +162,6 @@ export default class FormArray extends Component {
     changeValue(dateStrings[1], endKey);
   };
 
-
   domAssembly = () => {
     const { changeValue, value, config, fileSpan, nameSpan } = this.props;
     return config.map((info, i) => {
@@ -175,12 +176,18 @@ export default class FormArray extends Component {
                             }}/>;
           break;
         case 'inputNumber': // 数字文本
-          fieldDom = <InputNumber
-            {...defaultProps}
-            style={{ width: '100%' }}
-            onChange={(value) => {
-              changeValue(value, info.key);
-            }}/>;
+          fieldDom =
+            <Fragment>
+              <InputNumber
+                {...defaultProps}
+                style={info.style || { width: '100%' }}
+                max={info.max ? info.max : Infinity}
+                onChange={(value) => {
+                  changeValue(value, info.key);
+                }}/>
+              {info.formatter ? <span>{info.formatter}</span> : ''}
+            </Fragment>
+          ;
           break;
         case 'checkBoxMutiple': // 多选 checkbox
           fieldDom = <CheckboxGroup {...defaultProps}
@@ -188,6 +195,15 @@ export default class FormArray extends Component {
                                       changeValue(value, info.key);
                                     }}/>;
           break;
+        case 'cascader': // 级联选择
+          fieldDom = <Cascader value={defaultProps.value}
+                               options={defaultProps.options}
+                               style={{ width: '100%' }}
+                               onChange={(value, selectedOptions) => {
+                                 changeValue(value, info.key);
+                               }}/>; // 返回数组 [parent,child]
+          break;
+
         case 'selectMultiple': // 下拉多选
           fieldDom = <Select {...defaultProps}
                              mode="multiple"
@@ -206,7 +222,7 @@ export default class FormArray extends Component {
         case 'select': // 下拉单选
           fieldDom = <Select {...defaultProps}
                              style={{ width: '100%' }}
-                             allowClear
+                             allowClear={typeof info.allowClear !== 'undefined' ? info.allowClear : true}
                              onChange={(value) => {
                                changeValue(value, info.key);
                              }}>
@@ -288,7 +304,7 @@ export default class FormArray extends Component {
                                   {...defaultProps}
                                   style={{ width: '100%' }}
                                   format={info.format}
-                                  placeholder={info.placeholder || ['开始日期','结束日期']}
+                                  placeholder={info.placeholder || ['开始日期', '结束日期']}
                                   onChange={(dates, dateStrings) => {
                                     this.rangeOnChange(dateStrings, info.key, info.endKey);
                                   }}>
@@ -315,6 +331,7 @@ export default class FormArray extends Component {
           break;
         case 'radioGroup': // 圆形 选择框
           fieldDom = <RadioGroup value={defaultProps.value}
+                                 disabled={defaultProps.disabled}
                                  style={{ width: '100%' }}
                                  onChange={(e) => {
                                    changeValue(e.target.value, info.key);
@@ -361,6 +378,13 @@ export default class FormArray extends Component {
             </Button>
           </Upload>;
 
+          break;
+        case 'buttonUpload':
+          fieldDom = <ButtonUpload onChange={(url) => {
+            changeValue(url, info.key);
+          }}
+                                   {...defaultProps}
+          />;
           break;
         case 'text':
           fieldDom = <div>{defaultProps.value}</div>;
@@ -443,7 +467,7 @@ FormArray.defaultProps = {
       name: '时间段选择',
       type: 'rangePicker',
       format: 'YYYY-MM-DD',
-      placeholder: ['开始时间','结束时间'],
+      placeholder: ['开始时间', '结束时间'],
       required: true,
     },
     {

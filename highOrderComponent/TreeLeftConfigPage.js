@@ -20,6 +20,11 @@ export default class TreeLeftConfigPage extends Component{
   }
 
   componentWillReceiveProps(nextProps, nextContext) {
+    if ('treeNodes' in nextProps) {
+      this.setState({
+        treeNodes: nextProps.treeNodes || []
+      })
+    }
   }
 
   getTreeNodes = () => {
@@ -42,12 +47,14 @@ export default class TreeLeftConfigPage extends Component{
 
     if (item[childName]) {
       return (
-        <TreeNode title={item[nodeTitleName]} key={item[nodeKeyName]}>
+        <TreeNode title={item[nodeTitleName]}
+                  key={item[nodeKeyName]}>
           {this.renderTreeNodes(item[childName])}
         </TreeNode>
       );
     }
-    return <TreeNode {...item} key={item[nodeKeyName]} />;
+    return <TreeNode {...item}
+                     key={item[nodeKeyName]} />;
   });
 
   render() {
@@ -72,7 +79,8 @@ export default class TreeLeftConfigPage extends Component{
             { this.renderTreeNodes(treeNodes) }
           </DirectoryTree>
         </Col>
-        <Col {...contentLayout} className={styles.content}>
+        <Col {...contentLayout}
+             className={styles.content}>
           { this.props.children }
         </Col>
       </Row>

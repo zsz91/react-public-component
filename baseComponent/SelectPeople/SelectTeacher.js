@@ -123,7 +123,10 @@ export default class SelectTeacher extends Component {
   render() {
     const { handleOk } = this.props;
     const { showModal, list, pagination, selectedRows } = this.state;
-    const columns = [
+    const columns = [{
+    title: '序号',
+    render: (text, record,index) => (index+1),
+  },
       {
         title: '工号',
         dataIndex: 'userName',

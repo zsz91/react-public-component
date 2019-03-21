@@ -9,16 +9,19 @@ const CheckboxGroup = Checkbox.Group;
 
 export default class CheckModules extends Component{
   state = {
-    refs:{},
+
   };
 
   onRef = (name, component) => {
-    this.setState({
-      refs: {
-        ...this.state.refs,
-        [name]: component
-      }
-    })
+    const { onRef } = this.props;
+
+    onRef && onRef(name, component);
+  };
+
+  onRefFilter = (name, component) => {
+    const { onRefFilter } = this.props;
+
+    onRefFilter && onRefFilter(name, component);
   };
 
   handlerChange = (checkedValues) => {
@@ -26,23 +29,23 @@ export default class CheckModules extends Component{
   };
 
   render() {
-    const { modules, defaultCheckedKeys } = this.props;
+    const { modules, value, data } = this.props;
 
     return (
       <Fragment>
-        <CheckboxGroup onChange={this.handlerChange}
-                       style={{width: '100%'}}
-                       defaultValue={defaultCheckedKeys}>
+        {/*<CheckboxGroup onChange={this.handlerChange}*/}
+                       {/*style={{width: '100%'}}*/}
+                       {/*value={value}>*/}
           {
             modules.map(item => {
               return (
-                <CheckModulesItem key={item.value} checkboxAttr={item}>
-                  <AwardConfig {...item} onRef={this.onRef}></AwardConfig>
+                <CheckModulesItem key={item.value} checkboxAttr={item} data={data} onChange={this.props.onChange}>
+                  <AwardConfig {...item} onRef={this.onRef} onRefFilter={this.onRefFilter} data={data}></AwardConfig>
                 </CheckModulesItem>
               )
             })
           }
-        </CheckboxGroup>
+        {/*</CheckboxGroup>*/}
       </Fragment>
     );
   }
@@ -51,14 +54,15 @@ export default class CheckModules extends Component{
 CheckModules.propTypes = {
   modules: PropTypes.array,     // 子项配置
   onCheckedChange: PropTypes.func, // checkboxGroup 改变函数
-  defaultCheckedKeys: PropTypes.array, // 默认checked状态的 keys
+  value: PropTypes.array, // 默认checked状态的 keys
+  data: PropTypes.object, // 获取的数据
 };
 
 CheckModules.defaultProps = {
   onCheckedChange: () => {
 
   },
-  defaultCheckedKeys: ['A'],
+  value: ['A'],
   modules: [
     {
       value: 'A',
@@ -73,4 +77,8 @@ CheckModules.defaultProps = {
       type: 'showInfo',
     },
   ],
+  data: '',
+  onRef: ()=>{},
+  onRefFilter: ()=>{},
+  onChange: () => {},
 };

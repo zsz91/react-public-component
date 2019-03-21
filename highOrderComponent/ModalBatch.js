@@ -19,30 +19,51 @@ export default class ModalBatch extends Component {
   constructor(props) {
     super(props);
     const { values } = this.props;
-    this.state={
+    this.state = {
       showModal: false,
       formValues: { ...values }, // 将默认值传进去 用于新增时可能遇到的需要传值的情况
     };
   }
 
-  componentWillUnmount(){
+  componentWillUnmount() {
   }
 
   changeShow = () => {
-    let { showModal } = this.state;
-    const { beforeShowModel } = this.props;
-    let flag;
+    const { beforeShowModel, selectRows, initFormValues } = this.props;
+    const { formValues, showModal } = this.state;
+    if (!selectRows.length && !this.state.showModal) {
+      message.warning('请至少选择一条数据');
+      return false;
+    }
+    if(initFormValues && !showModal){
+       initFormValues(selectRows,formValues).then((response)=>{
+         this.setState({
+           formValues: response ,
+         },()=>{
+           console.log(this.state.formValues);
+         })
+      });
 
+    }
+
+    /**
+     * 设置modal是否显示
+     * */
+    let flag;
     if (!showModal && beforeShowModel) {
-      beforeShowModel(this.props, ({text, type, isNotShow})=>{
+      beforeShowModel(this.props, ({ text, type, isNotShow }) => {
         flag = isNotShow;
-        if ( isNotShow && text) {
+        if (isNotShow && text) {
           message[type](text);
         }
       });
     }
-
-    if (flag) return;
+    if (flag) {
+      return false;
+    }
+    /**
+     * 设置modal是否显示
+     * */
 
     this.clearData();
     this.setState({
@@ -61,14 +82,13 @@ export default class ModalBatch extends Component {
   clearData = () => {
     const { values } = this.props;
     this.setState({
-      formValues: {...values},
+      formValues: { ...values },
     });
   };
 
-
   handleOk = () => {
     let { formValues } = this.state;
-    let param = {...formValues};
+    let param = { ...formValues };
     const { fields, url, responseCallBack, getPage, beforeSubmit, selectRows, postKey, sourceKey, handleSelectRows } = this.props;
     for (let item of fields) {
       if (item.required && !formValues[item.key] && formValues[item.key] !== 0) {
@@ -78,39 +98,42 @@ export default class ModalBatch extends Component {
       /**
        * 校验开始时间必须在结束时间之前
        * */
-      if(item.rule && item.rule === 'mustAfterStart'){
-        const check = checkDate(formValues[item.key],formValues[item.checkKey]);
-        if(!check){
+      if (item.rule && item.rule === 'mustAfterStart') {
+        const check = checkDate(formValues[item.key], formValues[item.checkKey]);
+        if (!check) {
           message.warning(`${item.name}必须在${item.checkKeyName}之后`);
           return false;
         }
       }
     }
 
-    param[postKey] = selectRows.map( (item) => {
+    param[postKey] = selectRows.map((item) => {
       return item[sourceKey];
     });
     param[postKey] = param[postKey].join(',');
 
-    if(beforeSubmit){
+    if (beforeSubmit) {
       let postData = beforeSubmit(this.props, formValues);
       param = {
         ...param,
         ...postData,
-      }
+      };
     }
 
-    service.addOrUpdate(param,url).then((response)=>{
-      if(response){
-        if(!responseCallBack(response)){
+    service.addOrUpdate(param, url).then((response) => {
+      if (response) {
+        if (responseCallBack && !responseCallBack(response)) {
           this.changeShow();
           return false;
-        }else{
+        } else {
           handleSelectRows([]);
           message.success('保存成功');
-          getPage();
           this.changeShow();
+          getPage();
         }
+      } else {
+        this.changeShow();
+        return false;
       }
 
     });
@@ -137,7 +160,7 @@ export default class ModalBatch extends Component {
                         changeValue={this.formStateChange}
                         nameSpan={nameSpan}
                         fileSpan={fileSpan}
-                        style={{paddingTop:'0px'}}
+                        style={{ paddingTop: '0px' }}
             />
           </ModalDiy> : null}
       </Fragment>);
@@ -163,12 +186,12 @@ ModalBatch.defaultProps = {
   postKey: 'ids',
   selectRows: [],
   url: 'asdasd/asdasd',
-  responseCallBack: (response)=>{
+  responseCallBack: (response) => {
     return !!response;
   },
   /*beforeShowModel: (props, callback) => {
 
   },*/
-  nameSpan: {big: 4, small: 4 },
-  fileSpan: {big: 1, small: 1 },
+  nameSpan: { big: 4, small: 4 },
+  fileSpan: { big: 1, small: 1 },
 };

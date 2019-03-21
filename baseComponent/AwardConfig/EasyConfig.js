@@ -7,15 +7,54 @@ import {
 import DynamicComponent from '../CustomForm/DynamicComponent';
 import PropTypes from 'prop-types';
 import styles from './AwardConfigs.less';
+import { getFormElemValue } from '../utils';
+import moment from 'moment';
+
 const FormItem = Form.Item;
 
 @Form.create()
 export default class EasyConfig extends Component{
+  constructor(props) {
+    super(props);
 
-  getFields = () =>{
-    const { form } = this.props;
+    this.state = {
+      data: props.data || {}
+    }
+  }
 
-    console.log(form.getFieldsValue());
+
+  getData = () =>{
+    const { data } = this.state;
+
+    return data;
+  };
+
+  stateChange = (key, type, e, other) =>{
+    let value = getFormElemValue(type, e, other);
+    let oldValue = this.state.data;
+    oldValue[key] = value;
+    this.setState({
+      data: oldValue,
+    });
+  };
+
+  inputDefaultProps = (type, key) => {
+    const { data } = this.state || {};
+    const value = data[key];
+    let result;
+
+    if (!value){
+      return null;
+    }
+    if (['input', 'inputNumber', 'select', 'editable', 'textarea', 'buttonUpload'].includes(type)) {
+      result = {value: value};
+    } else if (['checkbox'].includes(type)) {
+      result = {checked: value};
+    } else if (['datePicker', 'monthPicker'].includes(type)) {
+      result = {value: moment(value)};
+    }
+
+    return result;
   };
 
   componentDidMount() {
@@ -25,13 +64,7 @@ export default class EasyConfig extends Component{
   }
 
   render() {
-    const {
-      title,
-      fields,
-      form: {
-        getFieldDecorator
-      }
-    } = this.props;
+    const { title, fields, form: { getFieldDecorator }, disabled, readOnly } = this.props;
 
     return (
       <Row className={styles.easyConfig}>
@@ -40,21 +73,32 @@ export default class EasyConfig extends Component{
             {title}
           </span>
         </Col>
-        <Col xl={21} xxl={22}>
-          <Form layout="inline" className={styles.right}>
+        <Col xl={21} xxl={22} className={styles.right}>
+          <Form layout="inline">
+
             {
               fields.map((item, idx) => {
                 return (
                   <Col key={idx}>
                     {
                       item.map(config => {
+                        const configs = Object.assign(
+                          {disabled: disabled},
+                          config.config,
+                          this.inputDefaultProps(config.type, config.key));
                         return (
-                          <FormItem key={config.key} label={config.name} colon={false}>
-                            {
-                              getFieldDecorator(config.key, config.decoratorOptions || {})(
-                                <DynamicComponent type={config.type} config={config.config}/>
-                              )
-                            }
+                          <FormItem key={config.key}
+                                    label={config.name}
+                                    className={styles[config.className] || ''}
+                                    style={config.style || null}
+                                    colon={false}>
+                            <DynamicComponent type={config.type}
+                                              readOnly={readOnly}
+                                              config={configs}
+                                              onChange={(e,other) => {
+                                                this.stateChange(config.key, config.type, e, other);
+                                              }}
+                            />
                           </FormItem>
                         )
                       })
@@ -77,6 +121,8 @@ EasyConfig.propTypes = {
 };
 EasyConfig.defaultProps = {
   title: '',
+  data: {},
+  disabled: false,
   fields: [
     // [
     //   {

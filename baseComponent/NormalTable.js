@@ -7,7 +7,7 @@ export default class NormalTable extends Component {
 
   constructor(props) {
     super(props);
-    this.state={
+    this.state = {
       tableId: Math.random().toString(36).substr(2),
       scrollX: 0,
     };
@@ -19,13 +19,13 @@ export default class NormalTable extends Component {
    */
   componentDidMount() {
     let scrollX = 0;
-    for(let item of this.props.columns){
-      if(item!=null){
-      scrollX = typeof item.width !== 'undefined' ? scrollX + item.width : scrollX + 100;
-    }
+    for (let item of this.props.columns) {
+      if (item != null) {
+        scrollX = typeof item.width !== 'undefined' ? scrollX + item.width : scrollX + 100;
+      }
     }
     const width = document.getElementById(this.state.tableId).offsetWidth;
-    if(width < scrollX){
+    if (width < scrollX) {
       this.setState({
         scrollX: scrollX,
       });
@@ -36,30 +36,33 @@ export default class NormalTable extends Component {
   render(){
     const { dataSource, columns, rowKey,
             handleSelectRow, pagination, components,
-            loading,onChange
+            loading,onChange, bordered,scroll
     } = this.props;
     /**
      * 没有传rowSelection 传了handleSelectRow 时 使用 handleSelectRow 并封装rowSelection
      * 传了rowSelection 直接使用
      * */
-    const rowSelection =  handleSelectRow === false ? null : {
+    const rowSelection = handleSelectRow === false ? null : {
       columnWidth: 30,
       fixed: true,
       hideDefaultSelections: false,
-      onChange:(selectedRowKeys, selectedRows)=>{handleSelectRow( selectedRowKeys, selectedRows )}
+      onChange: (selectedRowKeys, selectedRows) => {
+        handleSelectRow(selectedRowKeys, selectedRows);
+      },
     };
-    const {scrollX} = this.state;
+    const { scrollX } = this.state;
     return (
           <Table dataSource={dataSource}
                  columns={columns}
                  components={components}
                  rowKey={rowKey || 'key'}
                  loading={loading}
+                 bordered={bordered}
                  id={this.state.tableId}
                  className={styles.NormalTable}
                  pagination={pagination ? pagination : false}
                  onChange={onChange}
-                 scroll={  scrollX > 0 ? { x: scrollX } : {}}
+                 scroll={  scrollX > 0 ? { x: scrollX } : scroll}
                  rowSelection={ this.props.rowSelection !== 'undefined' ? this.props.rowSelection : rowSelection }
           />
     );
@@ -68,6 +71,7 @@ export default class NormalTable extends Component {
 }
 NormalTable.propTypes = {
   dataSource: PropTypes.array.isRequired, // 表格数据源 To Antd Table
+  bordered: PropTypes.bool, // 是否显示border,
   columns: PropTypes.array.isRequired, // 字段 To Antd Table
   rowKey: PropTypes.string, // rowKey To Antd Table
   handleSelectRow: PropTypes.oneOfType([
@@ -84,17 +88,24 @@ NormalTable.propTypes = {
 };
 NormalTable.defaultProps = {
   rowKey: 'id',
-  handleSelectRow: (selectedRowKeys, selectedRows)=>{console.log(selectedRowKeys,selectedRows)}, // false,
+  handleSelectRow: (selectedRowKeys, selectedRows) => {
+    console.log(selectedRowKeys, selectedRows);
+  }, // false,
   pagination: {
     defaultCurrent: 1,
     total: 20,
     pageSize: 5,
     showQuickJumper: true,
-    onChange: (current, size) => {console.log(current, size)},
+    onChange: (current, size) => {
+      console.log(current, size);
+    },
   },
   loading: false,
+  bordered: false,
   components: undefined,
-  onChange: () => { console.log('NormalTable.onChange')},
+  onChange: () => {
+    console.log('NormalTable.onChange');
+  },
   dataSource: [],
   columns:
     [
@@ -189,9 +200,9 @@ NormalTable.defaultProps = {
         title: '操作',
         fixed: 'right',
         width: 120,
-        render: (text, record)=>{
-          return <span><a>编辑 </a>|<a> 删除</a></span>
-        }
+        render: (text, record) => {
+          return <span><a>编辑 </a>|<a> 删除</a></span>;
+        },
       },
     ],
 

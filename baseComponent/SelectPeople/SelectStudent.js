@@ -113,7 +113,12 @@ export default class SelectStudent extends Component {
   };
 
   handleSelect = (record) => {
-    const { config } = this.props;
+    const { config,handleOk } = this.props;
+    if(handleOk){
+      handleOk(record);
+      this.stateChange('showModal', false);
+      return;
+    }
     for (let item of config) {
       if (item.tansformKey && typeof record[item.tansformKey] !== 'undefined') {
         this.props.onChange(record[item.tansformKey], item.key);
@@ -127,7 +132,10 @@ export default class SelectStudent extends Component {
   render() {
     const { handleOk } = this.props;
     const { showModal, list, pagination, selectedRows } = this.state;
-    const columns = [
+    const columns = [{
+    title: '序号',
+    render: (text, record,index) => (index+1),
+  },
       {
         title: '学号',
         dataIndex: 'studentNo',

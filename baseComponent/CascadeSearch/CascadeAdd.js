@@ -11,6 +11,7 @@ import styles from '../index.less';
 import FormArray from '../FormArray';
 import PropTypes from 'prop-types';
 import * as service from './service';
+import { getInfo } from '../../highOrderComponent/Service';
 
 export default class CascadeAdd extends Component {
 
@@ -110,7 +111,27 @@ export default class CascadeAdd extends Component {
       default:
         break;
     }
+    this.setApiKeyValue(value, key);
     this.props.changeValue(value, key);
+  };
+
+  // 如果在字段的config 上设置了apiKey 则给apiKey 赋值枚举值的 name
+  setApiKeyValue = (value,key) => {
+    const { config } = this.state;
+    const Index = config.findIndex((item)=>{
+      return item.key === key;
+    });
+    if(Index !== -1 && config[Index].apiKey){
+      let opt = config[Index].options;
+      const apiKeyIndex = opt.findIndex((x)=>{
+        return x.key.toString() === value;
+      });
+      if(apiKeyIndex === -1){
+        return false;
+      }
+      this.props.changeValue(opt[apiKeyIndex].name, config[Index].apiKey);
+    }
+
   };
 
   getOptions = (response, key = 'id', name = 'name') => {
@@ -201,6 +222,14 @@ export default class CascadeAdd extends Component {
         });
       }
       else if (item.key === 'deptIds' || item.key === 'deptId') {
+        if(item.optionUrl){
+          getInfo({},item.optionUrl).then((response)=>{
+            this.setState({
+              deptList: this.getOptions(response, 'deptId', 'deptName'),
+            });
+          });
+          return true;
+        }
         service.queryForEmploymentDeptList().then((response) => {
           this.setState({
             deptList: this.getOptions(response, 'id', 'deptName'),

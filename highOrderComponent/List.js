@@ -14,11 +14,15 @@ export default class List extends Component {
       list: [],
       selectRows: [],
       formValues: {},
+      loading: true,
       pagination: {
         current: 1,
         total: 1,
         pageSize: 10,
         showQuickJumper: true,
+        onShowSizeChange: (current, size) => {
+          this.pageChange(current, size);
+        },
         onChange: (current, size) => {
           this.pageChange(current, size);
         },
@@ -46,9 +50,13 @@ export default class List extends Component {
     let url = search.url;  // 接口地址
     this.setState({
       list: [],
+      loading: true,
     });
 
     services.getInfo(data, url).then((response) => {
+      this.setState({
+        loading: false,
+      });
       if (!response || (search.paging && typeof response.total === 'undefined') || response.errMsg) {
         return false;
       }
@@ -74,6 +82,7 @@ export default class List extends Component {
   };
 
   pageChange = (current, size) => {
+    console.log(123123);
     this.setState({
       pagination: {
         ...this.state.pagination,
@@ -87,8 +96,22 @@ export default class List extends Component {
 
 
   formStateChange = (value, key) => {
+    const { search } = this.props.pageSearch;
+    const { condition } = search;
     let oldValue = this.state.formValues;
     oldValue[key] = value;
+    /**
+     * 如果设置了beforeChange回调函数 则调用此回调函数改变另外的字段的值
+     * */
+    const index = condition.findIndex((item)=>{
+      return item.key === key;
+    });
+    if(index !== -1){
+      const thisConfig = condition[index];
+      if(thisConfig.beforeChange){
+         oldValue = thisConfig.beforeChange(oldValue,thisConfig);
+      }
+    }
     this.setState({
       formValues: oldValue,
     });
@@ -109,14 +132,21 @@ export default class List extends Component {
   }
 
   resetFormValues = () => {
+    const { beforeResetFormValues } = this.props.pageSearch.search;
+    let { formValues } = this.state;
+    if(beforeResetFormValues){
+      formValues =  beforeResetFormValues(formValues);
+    }else{
+      formValues = {} ;
+    }
     this.setState({
-      formValues : {},
+      formValues,
     })
   };
 
   render() {
-    const { formValues, selectRows, list, pagination,  } = this.state;
-    const { listConfig, pageSearch, pageButton } = this.props;
+    const { formValues, selectRows, list, pagination, loading } = this.state;
+    const { listConfig, pageSearch, pageButton ,children} = this.props;
     const { columns } = pageSearch;
     for(let item of columns){
       if(typeof item.renderConfig !== 'undefined' && !item.render){
@@ -143,7 +173,9 @@ export default class List extends Component {
             <ButtonListDom config={pageButton}
                            handleSelectRows={this.handleSelectRows}
                            selectRows={selectRows}
+                           formValues={formValues}
                            getPage={this.getPage}
+                           children={children}
 
             /> : null}
 
@@ -152,6 +184,7 @@ export default class List extends Component {
               selectedRows={selectRows}
               data={{ list: list, pagination: pagination }}
               columns={columns}
+              loading={loading}
               noSelectRow={!listConfig.selectRows}
               onSelectRow={this.handleSelectRows}
             />
@@ -165,7 +198,7 @@ export default class List extends Component {
 
 List.propTypes = {
   listConfig: PropTypes.object.isRequired,
-  pageButton: PropTypes.array,
+ // pageButton: PropTypes.array,
   pageSearch: PropTypes.object.isRequired,
 };
 
@@ -200,42 +233,6 @@ List.defaultProps = {
       columns: [
         {
           title: '姓名',
-          dataIndex: '',
-        },
-        {
-          title: '学号',
-          dataIndex: '',
-        },
-        {
-          title: '班级',
-          dataIndex: '',
-        },
-        {
-          title: '财务处状态',
-          dataIndex: '',
-        },
-        {
-          title: '教务处状态',
-          dataIndex: '',
-        },
-        {
-          title: '后勤服务中心状态',
-          dataIndex: '',
-        },
-        {
-          title: '图书馆状态',
-          dataIndex: '',
-        },
-        {
-          title: '院系状态',
-          dataIndex: '',
-        },
-        {
-          title: '团委状态',
-          dataIndex: '',
-        },
-        {
-          title: '组织部状态',
           dataIndex: '',
         },
         {

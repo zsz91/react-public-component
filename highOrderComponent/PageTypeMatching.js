@@ -7,7 +7,7 @@
  * */
 import React, { Component, Fragment } from 'react';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
-import {deepCopy} from '../baseComponent/utils';
+import {deepCopy} from '@/baseComponent/utils';
 import List from './List';
 import ListTab from './ListTab';
 import ListPieChart from './ListPieChart';
@@ -28,12 +28,15 @@ export default class PageTypeMatching extends Component {
 
   render() {
     const { pageSetting, pageButton, pageSearch } = this.state;
+    const {children} = this.props;
     let dom = null;
     switch (pageSetting.type) {
       case 'list':
         dom = <List listConfig={pageSetting.listConfig}
                     pageButton={pageButton}
-                    pageSearch={pageSearch}/>;
+                    pageSearch={pageSearch}
+                    children={children}
+        />;
         break;
       case 'listPieChart':
         dom = <ListPieChart listConfig={pageSetting.listConfig}

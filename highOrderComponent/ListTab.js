@@ -1,9 +1,9 @@
 import React, { Component, Fragment } from 'react';
 import { Tabs } from 'antd';
-import Shell from '../baseComponent/Shell';
-import List from './List';
-import styles from '../baseComponent/index.less';
+import styles from '@/baseComponent/index.less';
 import PropTypes from 'prop-types';
+import Shell from '@/baseComponent/Shell';
+import List from './List';
 
 const TabPane = Tabs.TabPane;
 

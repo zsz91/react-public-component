@@ -3,49 +3,53 @@ import {
   Input,
   InputNumber,
   Icon,
-  Select, DatePicker, Checkbox, Button, Radio, Switch, Upload
+  Select, DatePicker, Checkbox, Button, Radio, Switch, Upload,
 } from 'antd';
 import ButtonDiy from '@/baseComponent/ButtonDiy';
+import ButtonUpload from '@/baseComponent/ButtonUpload';
 import RichEditor from '@/components/App/RichEditor';
-import baseConfig from '@/config/config'
+import baseConfig from '@/config/config';
 
 const { MonthPicker, RangePicker, WeekPicker } = DatePicker;
 const Option = Select.Option;
+const { TextArea } = Input;
 
-export default class DynamicComponent extends Component{
+export default class DynamicComponent extends Component {
   constructor(props) {
     super(props);
 
-    const value = props.value || {};
-    this.state = {
-
-    }
+    this.state = {};
   }
 
 
-  getRenderElem = () =>{
-    const { type, config } = this.props;
+  getRenderElem = () => {
+    const { type, config, readOnly } = this.props;
     let renderElem = null;
-
     switch (type) {
       case 'input':
         renderElem = <Input {...config}
+                            style={{width: '100%'}}
                             onChange={this.props.onChange}
         />;
         break;
       case 'inputNumber':
-        renderElem = <InputNumber {...config}
-                                  onChange={this.props.onChange}
+        renderElem = <InputNumber onChange={this.props.onChange}
+                                  min={0}
+                                  {...config}
         />;
         break;
       case 'datePicker':
         renderElem = <DatePicker {...config}
-                                 onChange={this.props.onChange}
+                                 onChange={(moment, dateString) => {
+                                   this.props.onChange(dateString);
+                                 }}
         />;
         break;
       case 'monthPicker':
         renderElem = <MonthPicker {...config}
-                                  onChange={this.props.onChange}
+                                  onChange={(moment, dateString) => {
+                                    this.props.onChange(dateString);
+                                  }}
         />;
         break;
       case 'editor':
@@ -58,24 +62,38 @@ export default class DynamicComponent extends Component{
                              onChange={this.props.onChange}
         >
           {
-            config.options.map(option =>{
+            config.options && config.options.map(option => {
               return (
                 <Option value={option.key} key={option.key}>{option.name}</Option>
-              )
+              );
             })
           }
         </Select>;
         break;
+      case 'checkbox':
+        renderElem = <Checkbox onChange={this.props.onChange} {...config}>{config.title || ''}</Checkbox>;
+        break;
+      case 'textarea':
+        renderElem = <TextArea onChange={this.props.onChange}
+                               {...config}
+        />;
+        break;
       case 'upload':
-        renderElem = <Upload name="files"
-                             onChange={this.props.onChange}
-                             action={baseConfig.uploadUrl}
-                             {...config}
+        renderElem = readOnly ? null : <Upload name="files"
+                                               onChange={this.props.onChange}
+                                               action={baseConfig.uploadUrl}
+
+                                               {...config}
         >
-          <ButtonDiy name="选择文件"
-                     className="defaultBlue"
-          />
+          <div>
+            <Icon type="plus"/>
+          </div>
         </Upload>;
+        break;
+      case 'buttonUpload':
+        renderElem = <ButtonUpload onChange={this.props.onChange}
+                                   readOnly={readOnly}
+                                   {...config}/>;
         break;
       default:
         break;
@@ -85,11 +103,8 @@ export default class DynamicComponent extends Component{
   };
 
   render() {
-    const renderElem  = this.getRenderElem();
-
-    return (renderElem)
+    return (this.getRenderElem());
   }
 }
 
-DynamicComponent.defaultProps = {
-};
+DynamicComponent.defaultProps = {};

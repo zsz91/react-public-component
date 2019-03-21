@@ -14,10 +14,22 @@ import * as service from './Service';
 export default class ModalConfirm extends Component {
 
   handleConfirm = () => {
-    const { selectRows,name, contentSentence } = this.props;
+    const { selectRows,name, contentSentence, onlyOne, checkSelectRow } = this.props;
     if(!selectRows.length){
         message.warning('请至少选择一条数据');
         return false;
+    }
+    if(onlyOne && selectRows.length > 1){
+      message.warning('只能选择一条数据进行操作');
+      return false;
+    }
+    if(checkSelectRow){
+      let res = checkSelectRow(selectRows);
+      if(res && res.result === false){
+        message.warning(res.info);
+        return false;
+      }
+
     }
     Modal.confirm({
       title: name,
@@ -43,8 +55,10 @@ export default class ModalConfirm extends Component {
       data = beforeUpdate(data,selectRows);
     }
     service.addOrUpdate(data,url).then((response) => {
-
-      if(!responseCallBack(response)){
+      if(responseCallBack && !responseCallBack(response)){
+        return false;
+      }
+      if(!response){
         return false;
       }else{
         message.success('操作成功');

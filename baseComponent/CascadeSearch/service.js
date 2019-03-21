@@ -17,6 +17,13 @@ const nationName = config.dictMap.民族;
 const postId =   config.dictMap.现任职务;
 const resultId = config.dictMap.处分结果;
 const SchoolStatus = config.dictMap.在校状态;
+
+const eduLenId = config.dictMap.学制;
+const sf = config.dictMap.省份;
+const categoryId = config.dictMap.类别名称;
+const keLei = config.dictMap.科类;
+const education = config.dictMap.学历;
+
 //在校状态
 
 //现任职务: { pCode: "BM018", dType: "BM018" },
@@ -321,6 +328,83 @@ export function findAllLeaveBatch(data={}) {
     {
       method: 'POST',
       body: data ,
+    }
+  );
+}
+
+/**
+ * 学制
+ * */
+
+export function getEduLenIdList() {
+  return request(`${httpServer}/DictionaryApi/getChildList`,
+    {
+      method: 'POST',
+      body: eduLenId,
+    }
+  );
+}
+
+/**
+ * 省份
+ * */
+
+export function getSfList() {
+  return request(`${httpServer}/DictionaryApi/getChildList`,
+    {
+      method: 'POST',
+      body: sf,
+    }
+  );
+}
+
+
+/**
+ * 校区
+ * */
+
+export function getXQList() {
+  return request(`${httpServer}/CampusApi/getAll`,
+    {
+      method: 'POST',
+      body: sf,
+    }
+  );
+}
+
+/*
+* 类别名称
+* */
+
+export function getCategoryList() {
+  return request(`${httpServer}/DictionaryApi/getChildList`,
+    {
+      method: 'POST',
+      body: categoryId,
+    }
+  );
+}
+
+/**
+ * 科类
+ * */
+export function getKeLei() {
+  return request(`${httpServer}/DictionaryApi/getChildList`,
+    {
+      method: 'POST',
+      body: keLei,
+    }
+  );
+}
+
+/*
+* 学历
+* */
+export function getEducation() {
+  return request(`${httpServer}/DictionaryApi/getChildList`,
+    {
+      method: 'POST',
+      body: education,
     }
   );
 }
